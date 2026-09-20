@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Generador GIFT</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+:root{
+  --paper:#F7F3EA;
+  --paper-raised:#FFFFFF;
+  --paper-sunken:#EFE8D4;
+  --ink:#26241F;
+  --ink-soft:#635D50;
+  --ink-muted:#9C9585;
+  --rule:#E4DDC8;
+  --rule-strong:#CBBF9C;
+  --accent:#33478F;
+  --accent-soft:#E7EAF6;
+  --accent-ink:#1C2957;
+  --correct:#3E6B4F;
+  --correct-soft:#E5EEE6;
+  --incorrect:#9C4A3E;
+  --incorrect-soft:#F5E7E2;
+  --font-display:'Fraunces', Georgia, 'Times New Roman', serif;
+  --font-body:'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono:'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#1B1915;
+    --paper-raised:#221F19;
+    --paper-sunken:#171512;
+    --ink:#F1ECDD;
+    --ink-soft:#C6BEA8;
+    --ink-muted:#8C846F;
+    --rule:#3A3527;
+    --rule-strong:#4C4636;
+    --accent:#93A4E0;
+    --accent-soft:#282E4C;
+    --accent-ink:#DCE1F5;
+    --correct:#8FCBA1;
+    --correct-soft:#213228;
+    --incorrect:#E2988A;
+    --incorrect-soft:#392621;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#1B1915;
+  --paper-raised:#221F19;
+  --paper-sunken:#171512;
+  --ink:#F1ECDD;
+  --ink-soft:#C6BEA8;
+  --ink-muted:#8C846F;
+  --rule:#3A3527;
+  --rule-strong:#4C4636;
+  --accent:#93A4E0;
+  --accent-soft:#282E4C;
+  --accent-ink:#DCE1F5;
+  --correct:#8FCBA1;
+  --correct-soft:#213228;
+  --incorrect:#E2988A;
+  --incorrect-soft:#392621;
+  color-scheme: dark;
+}
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--font-body);
+  line-height:1.55;
+}
+.page{
+  max-width:760px;
+  margin:0 auto;
+  padding-inline:16px;
+  padding-block:2.5rem 4rem;
+}
+@media (min-width:640px){
+  .page{padding-inline:32px;}
+}
+.masthead{margin-bottom:1.75rem;}
+.eyebrow{
+  font-family:var(--font-mono);
+  font-size:12px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:var(--accent);
+  margin:0 0 .6rem;
+}
+.masthead h1{
+  font-family:var(--font-display);
+  font-weight:600;
+  font-size:clamp(28px,5vw,38px);
+  margin:0 0 .5rem;
+  text-wrap:balance;
+  color:var(--ink);
+}
+.lede{
+  margin:0;
+  max-width:56ch;
+  color:var(--ink-soft);
+  font-size:15px;
+}
+.panel, .q-card, .output-panel{
+  background:var(--paper-raised);
+  border:1px solid var(--rule);
+  border-radius:14px;
+}
+.panel{padding:1.1rem 1.25rem .9rem;margin-bottom:1.5rem;}
+.field{display:flex;flex-direction:column;gap:.4rem;margin-bottom:.75rem;}
+.field label, .feedback-field label{font-size:13px;color:var(--ink-soft);font-weight:500;}
+input[type=text], input[type=number], textarea, select{
+  font:inherit;
+  font-size:14px;
+  color:var(--ink);
+  background:var(--paper);
+  border:1px solid var(--rule-strong);
+  border-radius:8px;
+  padding:.5rem .65rem;
+  width:100%;
+}
+input:focus-visible, textarea:focus-visible, select:focus-visible, button:focus-visible{
+  outline:2px solid var(--accent);
+  outline-offset:1px;
+}
+textarea{resize:vertical;min-height:64px;font-family:inherit;}
+.stats-bar{
+  display:flex;
+  flex-wrap:wrap;
+  gap:.5rem;
+  padding-top:.65rem;
+  border-top:1px solid var(--rule);
+}
+.stat-chip{
+  font-size:12px;
+  font-family:var(--font-mono);
+  color:var(--ink-soft);
+  background:var(--paper-sunken);
+  border:1px solid var(--rule);
+  border-radius:999px;
+  padding:.2rem .65rem;
+}
+.q-card{padding:1.1rem 1.25rem 1.25rem;margin-bottom:1rem;}
+.q-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:.75rem;
+  margin-bottom:.9rem;
+  flex-wrap:wrap;
+}
+.q-head-left{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;}
+.q-num{
+  font-family:var(--font-mono);
+  font-size:12px;
+  font-weight:500;
+  color:var(--accent-ink);
+  background:var(--accent-soft);
+  border-radius:6px;
+  padding:.15rem .55rem;
+}
+.q-example-badge{
+  font-size:11px;
+  color:var(--ink-muted);
+  border:1px dashed var(--rule-strong);
+  border-radius:999px;
+  padding:.1rem .55rem;
+}
+.q-head-right{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;}
+.type-select{width:auto;min-width:200px;}
+.icon-btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:32px;height:32px;flex-shrink:0;
+  background:transparent;border:1px solid var(--rule-strong);border-radius:8px;
+  color:var(--ink-soft);cursor:pointer;
+}
+.icon-btn:hover{background:var(--paper-sunken);color:var(--incorrect);}
+.answer-row{display:flex;align-items:center;gap:.55rem;margin-bottom:.45rem;}
+.answer-row input[type=text]{flex:1;}
+.mark{flex-shrink:0;width:19px;height:19px;cursor:pointer;accent-color:var(--correct);}
+.weight-tag{font-family:var(--font-mono);font-size:11px;color:var(--correct);white-space:nowrap;flex-shrink:0;}
+.btn-dashed{
+  width:100%;
+  background:transparent;
+  border:1px dashed var(--rule-strong);
+  border-radius:8px;
+  padding:.5rem;
+  font:inherit;
+  font-size:13px;
+  color:var(--ink-soft);
+  cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:.4rem;
+}
+.btn-dashed:hover{background:var(--paper-sunken);}
+.pair-row{
+  display:grid;
+  grid-template-columns:1fr auto 1fr auto;
+  gap:.5rem;
+  align-items:center;
+  margin-bottom:.45rem;
+}
+.pair-arrow{color:var(--ink-muted);font-family:var(--font-mono);}
+@media (max-width:480px){
+  .pair-row{grid-template-columns:1fr 1fr auto;}
+  .pair-arrow{display:none;}
+}
+.choice-row{display:flex;gap:1.25rem;flex-wrap:wrap;margin:.25rem 0 .25rem;}
+.choice-row label{display:flex;align-items:center;gap:.4rem;font-size:14px;cursor:pointer;}
+.num-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-top:.4rem;}
+@media (max-width:480px){.num-grid{grid-template-columns:1fr;}}
+.essay-note{
+  font-size:13px;color:var(--ink-soft);
+  background:var(--paper-sunken);
+  border-radius:8px;
+  padding:.65rem .8rem;
+  margin:0;
+}
+.hint{font-size:12px;color:var(--ink-muted);margin:0 0 .5rem;}
+.feedback-field{margin-top:.85rem;padding-top:.75rem;border-top:1px dashed var(--rule);display:flex;flex-direction:column;gap:.4rem;}
+.add-bar{display:flex;flex-wrap:wrap;gap:.6rem;margin-bottom:2rem;}
+#new-type-select{flex:1;min-width:220px;}
+.btn-ghost, .btn-primary{
+  font:inherit;font-size:14px;font-weight:500;
+  border-radius:9px;
+  padding:.55rem 1rem;
+  cursor:pointer;
+  display:inline-flex;align-items:center;gap:.45rem;
+  white-space:nowrap;
+}
+.btn-ghost{background:transparent;color:var(--ink);border:1px solid var(--rule-strong);}
+.btn-ghost:hover{background:var(--paper-sunken);}
+.btn-primary{background:var(--accent);color:#fff;border:1px solid var(--accent);}
+.btn-primary:hover{filter:brightness(1.08);}
+.output-panel{padding:1.25rem;}
+.output-head{display:flex;justify-content:space-between;align-items:baseline;gap:.5rem;flex-wrap:wrap;margin-bottom:.7rem;}
+.output-head h2{font-family:var(--font-display);font-weight:600;font-size:18px;margin:0;}
+.output-status{font-size:12px;font-family:var(--font-mono);color:var(--ink-soft);}
+.gift-preview{
+  font-family:var(--font-mono);
+  font-size:12.5px;
+  line-height:1.65;
+  background:var(--paper-sunken);
+  border:1px solid var(--rule);
+  border-radius:10px;
+  padding:1rem;
+  max-height:320px;
+  overflow:auto;
+  white-space:pre-wrap;
+  word-break:break-word;
+  margin:0 0 .9rem;
+  color:var(--ink);
+}
+.tok-name, .tok-category{color:var(--accent-ink);font-weight:500;}
+.tok-correct{color:var(--correct);}
+.tok-incorrect{color:var(--incorrect);}
+.tok-brace{color:var(--ink-muted);}
+.output-actions{display:flex;flex-wrap:wrap;gap:.6rem;margin-bottom:.7rem;}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+.toast{
+  position:fixed;
+  left:50%;
+  bottom:20px;
+  transform:translateX(-50%) translateY(20px);
+  background:var(--ink);
+  color:var(--paper);
+  font-size:13px;
+  padding:.6rem 1.1rem;
+  border-radius:10px;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .2s ease, transform .2s ease;
+  max-width:90vw;
+  text-align:center;
+  z-index:50;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.toast.error{background:var(--incorrect);}
+</style>
+</head>
+<body>
+<div class="page">
+  <header class="masthead">
+    <p class="eyebrow">Formato GIFT · Banco de preguntas de Moodle</p>
+    <h1>Generador GIFT</h1>
+    <p class="lede">Escribe tus preguntas, elige el tipo y descarga el archivo listo para importar en Moodle. El código se genera y se comprueba a medida que escribes. Este archivo funciona sin conexión: guárdalo y ábrelo con tu navegador cuando lo necesites.</p>
+  </header>
+
+  <section class="panel" aria-label="Ajustes del examen">
+    <div class="field">
+      <label for="category-input">Categoría en Moodle (opcional)</label>
+      <input type="text" id="category-input" placeholder="p. ej. Tema 2 · Retos demográficos" oninput="setCategory(this.value)">
+    </div>
+    <div class="stats-bar" id="stats-bar"></div>
+  </section>
+
+  <section id="questions-container" aria-label="Preguntas"></section>
+
+  <div class="add-bar">
+    <select id="new-type-select" aria-label="Tipo de la nueva pregunta">
+      <option value="multiple_single">Opción múltiple (una correcta)</option>
+      <option value="multiple_multi">Opción múltiple (varias correctas)</option>
+      <option value="truefalse">Verdadero / falso</option>
+      <option value="shortanswer">Respuesta corta</option>
+      <option value="matching">Emparejamiento</option>
+      <option value="numerical">Numérica</option>
+      <option value="essay">Ensayo (respuesta abierta)</option>
+    </select>
+    <button type="button" class="btn-ghost" id="add-question-btn">Añadir pregunta</button>
+    <button type="button" class="btn-ghost" id="reset-btn">Empezar de cero</button>
+  </div>
+
+  <section class="output-panel" aria-label="Código GIFT generado">
+    <div class="output-head">
+      <h2>Vista previa GIFT</h2>
+      <span class="output-status" id="output-status"></span>
+    </div>
+    <pre class="gift-preview" id="gift-preview" aria-live="polite"></pre>
+    <textarea id="gift-raw" class="sr-only" tabindex="-1" aria-hidden="true" readonly></textarea>
+    <div class="output-actions">
+      <button type="button" class="btn-ghost" id="copy-btn">Copiar código</button>
+      <button type="button" class="btn-primary" id="download-btn">Descargar archivo</button>
+    </div>
+    <p class="hint">Se descarga como .txt. En Moodle: Banco de preguntas → Importar → elige "formato GIFT" en el desplegable de formato (por lo general no depende de la extensión del archivo; si tu Moodle da problemas, renómbralo a .gift antes de subirlo).</p>
+  </section>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</div>
+
+<script>
+const TYPE_LABELS = {
+  multiple_single: 'Opción múltiple (una correcta)',
+  multiple_multi: 'Opción múltiple (varias correctas)',
+  truefalse: 'Verdadero / falso',
+  shortanswer: 'Respuesta corta',
+  matching: 'Emparejamiento',
+  numerical: 'Numérica',
+  essay: 'Ensayo (respuesta abierta)'
+};
+
+const ICON_PLUS = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>';
+const ICON_TRASH = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>';
+
+function escHtml(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function escAttr(s){ return escHtml(s).replace(/"/g,'&quot;'); }
+
+function giftEsc(s){
+  return (s||'')
+    .replace(/\\/g,'\\\\')
+    .replace(/~/g,'\\~')
+    .replace(/=/g,'\\=')
+    .replace(/#/g,'\\#')
+    .replace(/\{/g,'\\{')
+    .replace(/\}/g,'\\}');
+}
+
+function makeQuestion(id, type){
+  const base = {id, type, name:'', text:'', feedback:'', isExample:false};
+  if(type==='multiple_single'){
+    return Object.assign(base, {answers:[{text:'',correct:true},{text:'',correct:false},{text:'',correct:false}]});
+  }
+  if(type==='multiple_multi'){
+    return Object.assign(base, {answers:[{text:'',correct:true},{text:'',correct:true},{text:'',correct:false}]});
+  }
+  if(type==='truefalse'){
+    return Object.assign(base, {tf:true});
+  }
+  if(type==='shortanswer'){
+    return Object.assign(base, {saLines:''});
+  }
+  if(type==='matching'){
+    return Object.assign(base, {pairs:[{left:'',right:''},{left:'',right:''},{left:'',right:''}]});
+  }
+  if(type==='numerical'){
+    return Object.assign(base, {numMode:'tolerance', numAnswer:'', numTolerance:'0', numMin:'', numMax:''});
+  }
+  if(type==='essay'){
+    return base;
+  }
+  base.type = 'multiple_single';
+  return Object.assign(base, {answers:[{text:'',correct:true},{text:'',correct:false},{text:'',correct:false}]});
+}
+
+function defaultState(empty){
+  if(empty){ return {category:'', seq:0, questions:[]}; }
+  const q1 = makeQuestion(1,'multiple_single');
+  q1.text = '¿Cuál es la capital de Francia?';
+  q1.answers = [
+    {text:'París', correct:true},
+    {text:'Londres', correct:false},
+    {text:'Berlín', correct:false},
+    {text:'Roma', correct:false}
+  ];
+  q1.isExample = true;
+
+  const q2 = makeQuestion(2,'truefalse');
+  q2.text = 'El formato GIFT sirve para importar preguntas en el banco de preguntas de Moodle.';
+  q2.tf = true;
+  q2.isExample = true;
+
+  return {category:'', seq:2, questions:[q1,q2]};
+}
+
+function loadDraft(){
+  try{
+    const raw = localStorage.getItem('gift-generator-draft');
+    if(raw){
+      const parsed = JSON.parse(raw);
+      if(parsed && Array.isArray(parsed.questions)) return parsed;
+    }
+  }catch(e){}
+  return null;
+}
+function saveDraft(){
+  try{ localStorage.setItem('gift-generator-draft', JSON.stringify(state)); }catch(e){}
+}
+
+let state = loadDraft() || defaultState(false);
+if(typeof state.seq !== 'number'){
+  state.seq = state.questions.reduce((m,q)=>Math.max(m,q.id||0),0);
+}
+
+function onTextChange(){ saveDraft(); updateOutput(); }
+function onStructuralChange(){ saveDraft(); renderAll(); updateOutput(); }
+
+function findQ(id){ return state.questions.find(q=>q.id===id); }
+
+function addQuestion(type){
+  const id = ++state.seq;
+  state.questions.push(makeQuestion(id, type));
+  onStructuralChange();
+  requestAnimationFrame(()=>{
+    const el = document.getElementById('card-'+id);
+    if(el) el.scrollIntoView({behavior:'smooth', block:'center'});
+  });
+}
+function removeQuestion(id){
+  state.questions = state.questions.filter(q=>q.id!==id);
+  onStructuralChange();
+}
+function setType(id, type){
+  const q = findQ(id);
+  if(!q) return;
+  const keep = {name:q.name, text:q.text, feedback:q.feedback};
+  const fresh = makeQuestion(id, type);
+  Object.assign(fresh, keep);
+  const idx = state.questions.indexOf(q);
+  state.questions[idx] = fresh;
+  onStructuralChange();
+}
+function syncField(id, field, val){
+  const q = findQ(id);
+  if(q){ q[field] = val; q.isExample = false; onTextChange(); }
+}
+function syncAnswerText(id, idx, val){
+  const q = findQ(id);
+  if(q){ q.answers[idx].text = val; q.isExample = false; onTextChange(); }
+}
+function syncPair(id, idx, side, val){
+  const q = findQ(id);
+  if(q){ q.pairs[idx][side] = val; q.isExample = false; onTextChange(); }
+}
+function setCategory(val){ state.category = val; onTextChange(); }
+function setCorrectSingle(id, idx){
+  const q = findQ(id);
+  if(q){ q.answers.forEach((a,i)=>a.correct=(i===idx)); q.isExample=false; onStructuralChange(); }
+}
+function toggleCorrectMulti(id, idx){
+  const q = findQ(id);
+  if(q){ q.answers[idx].correct = !q.answers[idx].correct; q.isExample=false; onStructuralChange(); }
+}
+function addAnswer(id){
+  const q = findQ(id);
+  if(q){ q.answers.push({text:'', correct:false}); onStructuralChange(); }
+}
+function removeAnswer(id, idx){
+  const q = findQ(id);
+  if(q && q.answers.length>2){ q.answers.splice(idx,1); onStructuralChange(); }
+}
+function addPair(id){
+  const q = findQ(id);
+  if(q){ q.pairs.push({left:'',right:''}); onStructuralChange(); }
+}
+function removePair(id, idx){
+  const q = findQ(id);
+  if(q && q.pairs.length>1){ q.pairs.splice(idx,1); onStructuralChange(); }
+}
+function setTF(id, val){
+  const q = findQ(id);
+  if(q){ q.tf = (val==='true'); q.isExample=false; onStructuralChange(); }
+}
+function setNumMode(id, mode){
+  const q = findQ(id);
+  if(q){ q.numMode = mode; onStructuralChange(); }
+}
+function resetAll(){
+  if(!confirm('¿Borrar todas las preguntas y empezar de cero?')) return;
+  state = defaultState(true);
+  saveDraft(); renderAll(); updateOutput();
+}
+
+function renderCard(q, num){
+  const typeOptions = Object.keys(TYPE_LABELS).map(v=>`<option value="${v}"${q.type===v?' selected':''}>${TYPE_LABELS[v]}</option>`).join('');
+  let body = '';
+
+  if(q.type==='multiple_single' || q.type==='multiple_multi'){
+    const multi = q.type==='multiple_multi';
+    const correctCount = q.answers.filter(a=>a.correct).length;
+    const weight = correctCount ? Number((100/correctCount).toFixed(5)) : 0;
+    body = `<p class="hint">${multi ? 'Marca todas las respuestas correctas: el peso se reparte a partes iguales entre ellas.' : 'Marca la respuesta correcta.'}</p>` +
+      q.answers.map((a,i)=>`
+        <div class="answer-row">
+          <input type="${multi?'checkbox':'radio'}" class="mark" ${multi ? `onchange="toggleCorrectMulti(${q.id},${i})"` : `name="correct_${q.id}" onchange="setCorrectSingle(${q.id},${i})"`} ${a.correct?'checked':''} aria-label="Marcar respuesta ${i+1} como correcta">
+          <input type="text" value="${escAttr(a.text)}" placeholder="Respuesta ${i+1}" oninput="syncAnswerText(${q.id},${i},this.value)">
+          ${multi && a.correct ? `<span class="weight-tag">${weight}%</span>` : ''}
+          <button type="button" class="icon-btn" onclick="removeAnswer(${q.id},${i})" aria-label="Eliminar respuesta ${i+1}">${ICON_TRASH}</button>
+        </div>`).join('') +
+      `<button type="button" class="btn-dashed" onclick="addAnswer(${q.id})">${ICON_PLUS} Añadir opción</button>`;
+  } else if(q.type==='truefalse'){
+    body = `<div class="choice-row">
+      <label><input type="radio" name="tf_${q.id}" value="true" ${q.tf?'checked':''} onchange="setTF(${q.id},'true')"> Verdadero</label>
+      <label><input type="radio" name="tf_${q.id}" value="false" ${!q.tf?'checked':''} onchange="setTF(${q.id},'false')"> Falso</label>
+    </div>`;
+  } else if(q.type==='shortanswer'){
+    body = `<p class="hint">Una respuesta aceptada por línea. Puedes añadir varias formas válidas.</p>
+      <textarea placeholder="España&#10;Reino de España" oninput="syncField(${q.id},'saLines',this.value)">${escHtml(q.saLines||'')}</textarea>`;
+  } else if(q.type==='matching'){
+    body = `<p class="hint">Añade al menos 3 pares término → definición.</p>` +
+      q.pairs.map((p,i)=>`
+        <div class="pair-row">
+          <input type="text" value="${escAttr(p.left)}" placeholder="Término ${i+1}" oninput="syncPair(${q.id},${i},'left',this.value)">
+          <span class="pair-arrow">→</span>
+          <input type="text" value="${escAttr(p.right)}" placeholder="Definición ${i+1}" oninput="syncPair(${q.id},${i},'right',this.value)">
+          <button type="button" class="icon-btn" onclick="removePair(${q.id},${i})" aria-label="Eliminar par ${i+1}">${ICON_TRASH}</button>
+        </div>`).join('') +
+      `<button type="button" class="btn-dashed" onclick="addPair(${q.id})">${ICON_PLUS} Añadir par</button>`;
+  } else if(q.type==='numerical'){
+    body = `<div class="choice-row">
+        <label><input type="radio" name="nummode_${q.id}" value="tolerance" ${q.numMode==='tolerance'?'checked':''} onchange="setNumMode(${q.id},'tolerance')"> Valor ± margen</label>
+        <label><input type="radio" name="nummode_${q.id}" value="range" ${q.numMode==='range'?'checked':''} onchange="setNumMode(${q.id},'range')"> Rango (mínimo–máximo)</label>
+      </div>
+      <div class="num-grid">
+        ${q.numMode==='range' ? `
+          <div class="field"><label>Valor mínimo</label><input type="number" step="any" value="${escAttr(q.numMin)}" oninput="syncField(${q.id},'numMin',this.value)"></div>
+          <div class="field"><label>Valor máximo</label><input type="number" step="any" value="${escAttr(q.numMax)}" oninput="syncField(${q.id},'numMax',this.value)"></div>
+        ` : `
+          <div class="field"><label>Respuesta correcta</label><input type="number" step="any" value="${escAttr(q.numAnswer)}" oninput="syncField(${q.id},'numAnswer',this.value)"></div>
+          <div class="field"><label>Margen de error (±)</label><input type="number" step="any" value="${escAttr(q.numTolerance)}" oninput="syncField(${q.id},'numTolerance',this.value)"></div>
+        `}
+      </div>`;
+  } else if(q.type==='essay'){
+    body = `<p class="essay-note">El alumno escribirá una respuesta libre que corregirás a mano en Moodle. Si quieres, usa la retroalimentación general de abajo para dejarte una respuesta modelo.</p>`;
+  }
+
+  return `<article class="q-card" id="card-${q.id}">
+    <div class="q-head">
+      <div class="q-head-left">
+        <span class="q-num">Pregunta ${num}</span>
+        ${q.isExample ? '<span class="q-example-badge">Ejemplo</span>' : ''}
+      </div>
+      <div class="q-head-right">
+        <select class="type-select" onchange="setType(${q.id}, this.value)" aria-label="Tipo de pregunta ${num}">${typeOptions}</select>
+        <button type="button" class="icon-btn" onclick="removeQuestion(${q.id})" aria-label="Eliminar pregunta ${num}">${ICON_TRASH}</button>
+      </div>
+    </div>
+    <div class="field">
+      <label>Enunciado</label>
+      <textarea placeholder="Escribe aquí la pregunta..." oninput="syncField(${q.id},'text',this.value)">${escHtml(q.text)}</textarea>
+    </div>
+    ${body}
+    <div class="feedback-field">
+      <label>Retroalimentación general (opcional)</label>
+      <input type="text" value="${escAttr(q.feedback)}" placeholder="Se muestra al alumno tras responder, acierte o no" oninput="syncField(${q.id},'feedback',this.value)">
+    </div>
+  </article>`;
+}
+
+function renderAll(){
+  const c = document.getElementById('questions-container');
+  c.innerHTML = state.questions.length
+    ? state.questions.map((q,i)=>renderCard(q,i+1)).join('')
+    : '<p class="hint" style="padding:.5rem 0 1rem;">Todavía no hay preguntas. Añade la primera con el botón de abajo.</p>';
+}
+
+function renderStats(){
+  const counts = {};
+  state.questions.forEach(q=>{ counts[q.type] = (counts[q.type]||0)+1; });
+  const chips = Object.keys(counts).map(t=>`<span class="stat-chip">${TYPE_LABELS[t]}: ${counts[t]}</span>`).join('');
+  document.getElementById('stats-bar').innerHTML = chips || '<span class="stat-chip">Sin preguntas todavía</span>';
+}
+
+function buildQuestionGift(q){
+  const name = (q.name && q.name.trim()) ? giftEsc(q.name.trim()) : '';
+  const namePart = name ? `::${name}::` : '';
+  const text = giftEsc((q.text||'').trim()) || 'Pregunta sin enunciado';
+  let inner = '';
+  let ok = true;
+
+  if(q.type==='multiple_single'){
+    const answers = (q.answers||[]).filter(a=>a.text.trim());
+    if(answers.length<2 || !answers.some(a=>a.correct)) ok=false;
+    else inner = answers.map(a=>`\n    ${a.correct?'=':'~'}${giftEsc(a.text.trim())}`).join('');
+  } else if(q.type==='multiple_multi'){
+    const answers = (q.answers||[]).filter(a=>a.text.trim());
+    const correctCount = answers.filter(a=>a.correct).length;
+    if(answers.length<2 || correctCount===0) ok=false;
+    else{
+      const weight = Number((100/correctCount).toFixed(5));
+      inner = answers.map(a=> a.correct
+        ? `\n    ~%${weight}%${giftEsc(a.text.trim())}`
+        : `\n    ~${giftEsc(a.text.trim())}`
+      ).join('');
+    }
+  } else if(q.type==='truefalse'){
+    inner = q.tf ? 'TRUE' : 'FALSE';
+  } else if(q.type==='shortanswer'){
+    const lines = (q.saLines||'').split('\n').map(l=>l.trim()).filter(Boolean);
+    if(!lines.length) ok=false;
+    else inner = lines.map(l=>`\n    =${giftEsc(l)}`).join('');
+  } else if(q.type==='matching'){
+    const pairs = (q.pairs||[]).filter(p=>p.left.trim() && p.right.trim());
+    if(pairs.length<2) ok=false;
+    else inner = pairs.map(p=>`\n    =${giftEsc(p.left.trim())} -> ${giftEsc(p.right.trim())}`).join('');
+  } else if(q.type==='numerical'){
+    if(q.numMode==='range'){
+      const min = parseFloat(q.numMin), max = parseFloat(q.numMax);
+      if(isNaN(min) || isNaN(max)) ok=false;
+      else inner = `#${min}..${max}`;
+    } else {
+      const ans = parseFloat(q.numAnswer);
+      const tol = parseFloat(q.numTolerance);
+      if(isNaN(ans)) ok=false;
+      else inner = `#${ans}:${isNaN(tol)?0:tol}`;
+    }
+  } else if(q.type==='essay'){
+    inner = '';
+  } else {
+    ok = false;
+  }
+
+  if(!ok) return null;
+
+  const multiline = inner.indexOf('\n') !== -1;
+  const feedback = (q.feedback && q.feedback.trim()) ? ` ####${giftEsc(q.feedback.trim())}` : '';
+  return `${namePart}${text}{${inner}${multiline?'\n':''}${feedback}}`;
+}
+
+function generateFullGift(){
+  let out = '';
+  if(state.category && state.category.trim()){
+    out += `$CATEGORY: ${giftEsc(state.category.trim())}\n\n`;
+  }
+  let validCount = 0, invalidCount = 0;
+  state.questions.forEach(q=>{
+    const built = buildQuestionGift(q);
+    if(built){ out += built + '\n\n'; validCount++; }
+    else invalidCount++;
+  });
+  return {text: out, validCount, invalidCount, total: state.questions.length};
+}
+
+function highlightGift(raw){
+  let h = escHtml(raw);
+  h = h.replace(/^(\$CATEGORY:.*)$/gm, '<span class="tok-category">$1</span>');
+  h = h.replace(/(::[^:\n][^:\n]*::)/g, '<span class="tok-name">$1</span>');
+  h = h.replace(/\{(TRUE|T)\}/g, '{<span class="tok-correct">$1</span>}');
+  h = h.replace(/\{(FALSE|F)\}/g, '{<span class="tok-incorrect">$1</span>}');
+  h = h.replace(/\{(#[^{}]*)\}/g, '{<span class="tok-correct">$1</span>}');
+  h = h.replace(/^(\s*)(=[^\n]*)$/gm, '$1<span class="tok-correct">$2</span>');
+  h = h.replace(/^(\s*)(~[^\n]*)$/gm, '$1<span class="tok-incorrect">$2</span>');
+  h = h.replace(/([{}])/g, '<span class="tok-brace">$1</span>');
+  return h;
+}
+
+function updateOutput(){
+  const {text, validCount, invalidCount, total} = generateFullGift();
+  const preview = document.getElementById('gift-preview');
+  preview.innerHTML = text.trim()
+    ? highlightGift(text)
+    : '<span style="color:var(--ink-muted)">Tu código GIFT aparecerá aquí a medida que completes preguntas.</span>';
+  document.getElementById('gift-raw').value = text;
+  const statusEl = document.getElementById('output-status');
+  if(total===0){ statusEl.textContent = 'Sin preguntas'; }
+  else if(invalidCount===0){ statusEl.textContent = `${validCount} de ${total} preguntas listas`; }
+  else { statusEl.textContent = `${validCount} de ${total} listas · ${invalidCount} incompleta${invalidCount>1?'s':''}`; }
+  renderStats();
+}
+
+let toastTimer = null;
+function showToast(msg, isError){
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.toggle('error', !!isError);
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>{ el.classList.remove('show'); }, 3800);
+}
+
+function slug(s){
+  const cleaned = s.normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-zA-Z0-9]+/g,'_').replace(/^_+|_+$/g,'').toLowerCase();
+  return cleaned || 'examen';
+}
+
+async function copyGift(){
+  const {text, validCount} = generateFullGift();
+  if(!validCount){ showToast('Añade al menos una pregunta completa antes de copiar.', true); return; }
+  try{
+    await navigator.clipboard.writeText(text);
+    showToast('Código GIFT copiado al portapapeles.');
+  }catch(e){
+    try{
+      const ta = document.getElementById('gift-raw');
+      ta.focus(); ta.select();
+      const ok = document.execCommand('copy');
+      if(!ok) throw new Error('copy failed');
+      showToast('Código GIFT copiado al portapapeles.');
+    }catch(e2){
+      showToast('No se pudo copiar automáticamente. Selecciona el texto de la vista previa a mano.', true);
+    }
+  }
+}
+
+async function downloadGift(){
+  const {text, validCount} = generateFullGift();
+  if(!validCount){ showToast('Añade al menos una pregunta completa antes de descargar.', true); return; }
+  const filename = slug(state.category && state.category.trim() ? state.category : 'examen') + '.txt';
+
+  if(window.claude && typeof window.claude.use === 'function'){
+    try{
+      const downloads = await window.claude.use('downloads');
+      if(downloads){
+        try{
+          const res = await downloads.save({filename, data: text});
+          showToast(res && res.status==='delivered' ? 'Archivo entregado.' : 'Archivo descargado. En Moodle, elige "formato GIFT" al importarlo.');
+          return;
+        }catch(err){
+          if(err && err.code === 'declined'){ return; }
+        }
+      }
+    }catch(e){}
+  }
+
+  try{
+    const blob = new Blob([text], {type:'text/plain;charset=utf-8'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(()=>URL.revokeObjectURL(url), 1000);
+    showToast('Archivo descargado. En Moodle, elige "formato GIFT" al importarlo.');
+  }catch(e){
+    showToast('No se pudo descargar. Prueba con "Copiar código".', true);
+  }
+}
+
+document.getElementById('category-input').value = state.category || '';
+document.getElementById('add-question-btn').addEventListener('click', ()=>{
+  addQuestion(document.getElementById('new-type-select').value);
+});
+document.getElementById('reset-btn').addEventListener('click', resetAll);
+document.getElementById('copy-btn').addEventListener('click', copyGift);
+document.getElementById('download-btn').addEventListener('click', downloadGift);
+
+renderAll();
+updateOutput();
+</script>
+</body>
+</html>
