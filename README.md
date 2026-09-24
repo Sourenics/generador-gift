@@ -1,4 +1,4 @@
-# 🎁 Generador GIFT
+# 🎁 Generador de preguntas Moodle
 
 > ⚠️ **Vibe-coded project**
 > Este proyecto ha sido desarrollado siguiendo la filosofía *vibe coding* (con la ayuda de IA). Es una herramienta experimental y práctica, creada para resolver una necesidad concreta y en constante desarrollo, por lo que está sujeta a continuas mejoras y ajustes. ¡Cualquier sugerencia o feedback es más que bienvenido!
@@ -12,29 +12,35 @@
 
 No requiere registros, servidores ni configuraciones avanzadas. Puedes usar la herramienta directamente desde tu navegador:
 
-👉 **[Acceder a Generador GIFT (Página Oficial)](https://sourenics.github.io/generador-gift/)**
+👉 **[Acceder al Generador (Página Oficial)](https://sourenics.github.io/generador-gift/)**
 
-También puedes descargar el archivo `.html` del repositorio y abrirlo con doble clic: funciona sin conexión a internet.
+También puedes descargar el archivo `index.html` del repositorio y abrirlo con doble clic: funciona sin conexión a internet.
 
 ---
 
 ## ✨ Características Principales
 
-* 📝 **7 tipos de pregunta:** opción múltiple (una o varias respuestas correctas), verdadero/falso, respuesta corta, emparejamiento, numérica (con margen de error o rango) y ensayo de respuesta abierta.
-* 👁️ **Vista previa en vivo:** el código GIFT se genera y se resalta por sintaxis (verde para lo correcto, rojo para lo incorrecto) a medida que escribes.
-* 💾 **Guardado automático en el navegador:** tu examen se conserva aunque cierres la pestaña; no se pierde el progreso entre sesiones.
-* 📤 **Exportación directa:** descarga el archivo listo para importar en el banco de preguntas de Moodle, o cópialo al portapapeles.
-* 🗂️ **Categoría y retroalimentación:** define la categoría de Moodle y añade retroalimentación general por pregunta.
+* 🔄 **Dos formatos de salida:** escribe las preguntas una sola vez y descárgalas en **GIFT** o en **XML de Moodle**. El selector de formato avisa de qué preguntas no admite cada uno en lugar de descartarlas en silencio.
+* 📝 **10 tipos de pregunta:** opción múltiple (una o varias correctas), verdadero/falso, respuesta corta, emparejamiento, numérica, ensayo y —solo en XML— respuestas incrustadas (cloze), seleccionar palabras que faltan y arrastrar y soltar sobre texto.
+* 👁️ **Vista previa en vivo:** el código se genera y se resalta por sintaxis mientras escribes, y un contador indica cuántas preguntas están listas para exportar.
+* 💾 **Guardado automático en el navegador:** tu examen se conserva aunque cierres la pestaña.
+* 📤 **Exportación directa:** descarga el archivo listo para importar, o cópialo al portapapeles.
+* 🗂️ **Categoría y retroalimentación:** define la categoría del banco de preguntas y añade retroalimentación general por pregunta.
 * ⚡ **100% Client-side (sin servidor):** funciona directamente en tu navegador. No requiere registro ni conexión a bases de datos.
 * 🔒 **Privacidad garantizada:** las preguntas que escribes no salen de tu navegador ni se envían a ningún servidor externo.
 
 ---
 
-## 🎓 Sobre el formato GIFT
+## 🎓 Qué formato elegir
 
-[GIFT](https://docs.moodle.org/en/GIFT_format) (*General Import Format Template*) es el formato de texto que usa Moodle para importar preguntas de forma masiva al banco de preguntas. Esta herramienta traduce lo que escribes en el formulario a la sintaxis GIFT correcta, para que no tengas que aprenderla ni escribirla a mano.
+| Formato | Tipos que admite | Cuándo usarlo |
+|---|---|---|
+| **GIFT** | Los 7 clásicos | Archivos ligeros y legibles, fáciles de revisar o retocar en cualquier editor de texto. |
+| **XML de Moodle** | Los 10, incluidos cloze, seleccionar palabras y arrastrar y soltar | Cuando necesites los tipos avanzados. Es el formato más completo de Moodle. |
 
-Para importar el archivo generado en Moodle: **Banco de preguntas → Importar → selecciona "formato GIFT"** en el desplegable de formato.
+Para importar en Moodle: **Banco de preguntas → Importar**, elige *formato GIFT* o *Formato XML de Moodle* según corresponda y sube el archivo.
+
+El escapado de caracteres reservados (`\ # = ~ { } :`), los saltos de línea y los pesos de las respuestas se generan siguiendo el código fuente del propio importador de Moodle, de modo que el texto que escribes es exactamente el que aparece tras importar.
 
 ---
 
@@ -44,7 +50,7 @@ El proyecto está construido en código estándar para garantizar ligereza y eje
 
 * **HTML5:** Estructura de la aplicación.
 * **CSS3:** Estilos visuales y diseño adaptativo, con soporte para modo claro y oscuro.
-* **JavaScript (Vanilla):** Lógica interactiva, generación del código GIFT y validación de preguntas.
+* **JavaScript (Vanilla):** Modelo común de preguntas, exportadores de cada formato y validación en vivo.
 
 ---
 

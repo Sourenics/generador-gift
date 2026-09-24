@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Generador GIFT</title>
+<title>Generador de preguntas Moodle</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
 <style>
@@ -74,164 +74,67 @@ body{
   font-family:var(--font-body);
   line-height:1.55;
 }
-.page{
-  max-width:760px;
-  margin:0 auto;
-  padding-inline:16px;
-  padding-block:2.5rem 4rem;
-}
-@media (min-width:640px){
-  .page{padding-inline:32px;}
-}
+.page{max-width:780px;margin:0 auto;padding-inline:16px;padding-block:2.5rem 4rem;}
+@media (min-width:640px){ .page{padding-inline:32px;} }
 .masthead{margin-bottom:1.75rem;}
-.eyebrow{
-  font-family:var(--font-mono);
-  font-size:12px;
-  letter-spacing:.08em;
-  text-transform:uppercase;
-  color:var(--accent);
-  margin:0 0 .6rem;
-}
-.masthead h1{
-  font-family:var(--font-display);
-  font-weight:600;
-  font-size:clamp(28px,5vw,38px);
-  margin:0 0 .5rem;
-  text-wrap:balance;
-  color:var(--ink);
-}
-.lede{
-  margin:0;
-  max-width:56ch;
-  color:var(--ink-soft);
-  font-size:15px;
-}
-.panel, .q-card, .output-panel{
-  background:var(--paper-raised);
-  border:1px solid var(--rule);
-  border-radius:14px;
-}
+.eyebrow{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin:0 0 .6rem;}
+.masthead h1{font-family:var(--font-display);font-weight:600;font-size:clamp(28px,5vw,38px);margin:0 0 .5rem;text-wrap:balance;color:var(--ink);}
+.lede{margin:0;max-width:58ch;color:var(--ink-soft);font-size:15px;}
+.panel, .q-card, .output-panel{background:var(--paper-raised);border:1px solid var(--rule);border-radius:14px;}
 .panel{padding:1.1rem 1.25rem .9rem;margin-bottom:1.5rem;}
 .field{display:flex;flex-direction:column;gap:.4rem;margin-bottom:.75rem;}
 .field label, .feedback-field label{font-size:13px;color:var(--ink-soft);font-weight:500;}
 input[type=text], input[type=number], textarea, select{
-  font:inherit;
-  font-size:14px;
-  color:var(--ink);
-  background:var(--paper);
-  border:1px solid var(--rule-strong);
-  border-radius:8px;
-  padding:.5rem .65rem;
-  width:100%;
+  font:inherit;font-size:14px;color:var(--ink);background:var(--paper);
+  border:1px solid var(--rule-strong);border-radius:8px;padding:.5rem .65rem;width:100%;
 }
-input:focus-visible, textarea:focus-visible, select:focus-visible, button:focus-visible{
-  outline:2px solid var(--accent);
-  outline-offset:1px;
-}
+input:focus-visible, textarea:focus-visible, select:focus-visible, button:focus-visible{outline:2px solid var(--accent);outline-offset:1px;}
 textarea{resize:vertical;min-height:64px;font-family:inherit;}
-.stats-bar{
-  display:flex;
-  flex-wrap:wrap;
-  gap:.5rem;
-  padding-top:.65rem;
-  border-top:1px solid var(--rule);
-}
-.stat-chip{
-  font-size:12px;
-  font-family:var(--font-mono);
-  color:var(--ink-soft);
-  background:var(--paper-sunken);
-  border:1px solid var(--rule);
-  border-radius:999px;
-  padding:.2rem .65rem;
-}
+.format-row{display:flex;flex-wrap:wrap;gap:1.25rem;margin-bottom:.85rem;}
+.format-opt{display:flex;align-items:flex-start;gap:.5rem;cursor:pointer;font-size:14px;}
+.format-opt input{margin-top:.28rem;flex-shrink:0;width:auto;}
+.format-opt small{display:block;color:var(--ink-muted);font-size:12px;line-height:1.4;}
+.stats-bar{display:flex;flex-wrap:wrap;gap:.5rem;padding-top:.65rem;border-top:1px solid var(--rule);}
+.stat-chip{font-size:12px;font-family:var(--font-mono);color:var(--ink-soft);background:var(--paper-sunken);border:1px solid var(--rule);border-radius:999px;padding:.2rem .65rem;}
 .q-card{padding:1.1rem 1.25rem 1.25rem;margin-bottom:1rem;}
-.q-head{
-  display:flex;
-  justify-content:space-between;
-  align-items:flex-start;
-  gap:.75rem;
-  margin-bottom:.9rem;
-  flex-wrap:wrap;
-}
+.q-card.unsupported{border-color:var(--rule-strong);background:var(--paper-sunken);}
+.q-head{display:flex;justify-content:space-between;align-items:flex-start;gap:.75rem;margin-bottom:.9rem;flex-wrap:wrap;}
 .q-head-left{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;}
-.q-num{
-  font-family:var(--font-mono);
-  font-size:12px;
-  font-weight:500;
-  color:var(--accent-ink);
-  background:var(--accent-soft);
-  border-radius:6px;
-  padding:.15rem .55rem;
-}
-.q-example-badge{
-  font-size:11px;
-  color:var(--ink-muted);
-  border:1px dashed var(--rule-strong);
-  border-radius:999px;
-  padding:.1rem .55rem;
-}
+.q-num{font-family:var(--font-mono);font-size:12px;font-weight:500;color:var(--accent-ink);background:var(--accent-soft);border-radius:6px;padding:.15rem .55rem;}
+.q-example-badge{font-size:11px;color:var(--ink-muted);border:1px dashed var(--rule-strong);border-radius:999px;padding:.1rem .55rem;}
+.q-warn{font-size:11px;color:var(--incorrect);background:var(--incorrect-soft);border-radius:999px;padding:.1rem .6rem;}
 .q-head-right{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;}
-.type-select{width:auto;min-width:200px;}
-.icon-btn{
-  display:inline-flex;align-items:center;justify-content:center;
-  width:32px;height:32px;flex-shrink:0;
-  background:transparent;border:1px solid var(--rule-strong);border-radius:8px;
-  color:var(--ink-soft);cursor:pointer;
-}
+.type-select{width:auto;min-width:210px;}
+.icon-btn{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;flex-shrink:0;background:transparent;border:1px solid var(--rule-strong);border-radius:8px;color:var(--ink-soft);cursor:pointer;}
 .icon-btn:hover{background:var(--paper-sunken);color:var(--incorrect);}
 .answer-row{display:flex;align-items:center;gap:.55rem;margin-bottom:.45rem;}
 .answer-row input[type=text]{flex:1;}
 .mark{flex-shrink:0;width:19px;height:19px;cursor:pointer;accent-color:var(--correct);}
 .weight-tag{font-family:var(--font-mono);font-size:11px;color:var(--correct);white-space:nowrap;flex-shrink:0;}
-.btn-dashed{
-  width:100%;
-  background:transparent;
-  border:1px dashed var(--rule-strong);
-  border-radius:8px;
-  padding:.5rem;
-  font:inherit;
-  font-size:13px;
-  color:var(--ink-soft);
-  cursor:pointer;
-  display:flex;align-items:center;justify-content:center;gap:.4rem;
-}
+.btn-dashed{width:100%;background:transparent;border:1px dashed var(--rule-strong);border-radius:8px;padding:.5rem;font:inherit;font-size:13px;color:var(--ink-soft);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.4rem;}
 .btn-dashed:hover{background:var(--paper-sunken);}
-.pair-row{
-  display:grid;
-  grid-template-columns:1fr auto 1fr auto;
-  gap:.5rem;
-  align-items:center;
-  margin-bottom:.45rem;
-}
+.pair-row{display:grid;grid-template-columns:1fr auto 1fr auto;gap:.5rem;align-items:center;margin-bottom:.45rem;}
 .pair-arrow{color:var(--ink-muted);font-family:var(--font-mono);}
-@media (max-width:480px){
-  .pair-row{grid-template-columns:1fr 1fr auto;}
-  .pair-arrow{display:none;}
-}
-.choice-row{display:flex;gap:1.25rem;flex-wrap:wrap;margin:.25rem 0 .25rem;}
+@media (max-width:480px){ .pair-row{grid-template-columns:1fr 1fr auto;} .pair-arrow{display:none;} }
+.choice-row{display:flex;gap:1.25rem;flex-wrap:wrap;margin:.25rem 0;}
 .choice-row label{display:flex;align-items:center;gap:.4rem;font-size:14px;cursor:pointer;}
+.choice-row input[type=radio]{width:auto;}
 .num-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-top:.4rem;}
-@media (max-width:480px){.num-grid{grid-template-columns:1fr;}}
-.essay-note{
-  font-size:13px;color:var(--ink-soft);
-  background:var(--paper-sunken);
-  border-radius:8px;
-  padding:.65rem .8rem;
-  margin:0;
-}
+@media (max-width:480px){ .num-grid{grid-template-columns:1fr;} }
+.essay-note{font-size:13px;color:var(--ink-soft);background:var(--paper-sunken);border-radius:8px;padding:.65rem .8rem;margin:0;}
 .hint{font-size:12px;color:var(--ink-muted);margin:0 0 .5rem;}
+.hint code{font-family:var(--font-mono);background:var(--paper-sunken);border-radius:4px;padding:0 .25rem;}
 .feedback-field{margin-top:.85rem;padding-top:.75rem;border-top:1px dashed var(--rule);display:flex;flex-direction:column;gap:.4rem;}
+.gap-card{border:1px solid var(--rule);border-radius:10px;padding:.75rem .85rem;margin-bottom:.6rem;background:var(--paper-sunken);}
+.gap-head{display:flex;align-items:center;gap:.5rem;margin-bottom:.6rem;flex-wrap:wrap;}
+.gap-tag{font-family:var(--font-mono);font-size:12px;font-weight:500;color:var(--accent-ink);background:var(--accent-soft);border-radius:6px;padding:.1rem .5rem;}
+.gap-head select{width:auto;min-width:150px;}
+.opt-row{display:flex;align-items:center;gap:.5rem;margin-bottom:.45rem;}
+.opt-row input[type=text]{flex:1;}
+.opt-row select{width:auto;min-width:92px;}
 .add-bar{display:flex;flex-wrap:wrap;gap:.6rem;margin-bottom:2rem;}
-#new-type-select{flex:1;min-width:220px;}
-.btn-ghost, .btn-primary{
-  font:inherit;font-size:14px;font-weight:500;
-  border-radius:9px;
-  padding:.55rem 1rem;
-  cursor:pointer;
-  display:inline-flex;align-items:center;gap:.45rem;
-  white-space:nowrap;
-}
+#new-type-select{flex:1;min-width:230px;}
+.btn-ghost, .btn-primary{font:inherit;font-size:14px;font-weight:500;border-radius:9px;padding:.55rem 1rem;cursor:pointer;display:inline-flex;align-items:center;gap:.45rem;white-space:nowrap;}
 .btn-ghost{background:transparent;color:var(--ink);border:1px solid var(--rule-strong);}
 .btn-ghost:hover{background:var(--paper-sunken);}
 .btn-primary{background:var(--accent);color:#fff;border:1px solid var(--accent);}
@@ -240,44 +143,18 @@ textarea{resize:vertical;min-height:64px;font-family:inherit;}
 .output-head{display:flex;justify-content:space-between;align-items:baseline;gap:.5rem;flex-wrap:wrap;margin-bottom:.7rem;}
 .output-head h2{font-family:var(--font-display);font-weight:600;font-size:18px;margin:0;}
 .output-status{font-size:12px;font-family:var(--font-mono);color:var(--ink-soft);}
-.gift-preview{
-  font-family:var(--font-mono);
-  font-size:12.5px;
-  line-height:1.65;
-  background:var(--paper-sunken);
-  border:1px solid var(--rule);
-  border-radius:10px;
-  padding:1rem;
-  max-height:320px;
-  overflow:auto;
-  white-space:pre-wrap;
-  word-break:break-word;
-  margin:0 0 .9rem;
-  color:var(--ink);
-}
+.notice{font-size:12.5px;color:var(--incorrect);background:var(--incorrect-soft);border:1px solid var(--rule);border-radius:8px;padding:.55rem .7rem;margin:0 0 .7rem;}
+.code-preview{font-family:var(--font-mono);font-size:12.5px;line-height:1.65;background:var(--paper-sunken);border:1px solid var(--rule);border-radius:10px;padding:1rem;max-height:340px;overflow:auto;white-space:pre-wrap;word-break:break-word;margin:0 0 .9rem;color:var(--ink);}
 .tok-name, .tok-category{color:var(--accent-ink);font-weight:500;}
 .tok-correct{color:var(--correct);}
 .tok-incorrect{color:var(--incorrect);}
 .tok-brace{color:var(--ink-muted);}
-.output-actions{display:flex;flex-wrap:wrap;gap:.6rem;margin-bottom:.7rem;}
+.tok-tag{color:var(--accent);}
+.tok-attr{color:var(--correct);}
+.tok-cdata{color:var(--ink-muted);}
+.output-actions{display:flex;flex-wrap:wrap;gap:.6rem;margin-bottom:.7rem;align-items:center;}
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
-.toast{
-  position:fixed;
-  left:50%;
-  bottom:20px;
-  transform:translateX(-50%) translateY(20px);
-  background:var(--ink);
-  color:var(--paper);
-  font-size:13px;
-  padding:.6rem 1.1rem;
-  border-radius:10px;
-  opacity:0;
-  pointer-events:none;
-  transition:opacity .2s ease, transform .2s ease;
-  max-width:90vw;
-  text-align:center;
-  z-index:50;
-}
+.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--paper);font-size:13px;padding:.6rem 1.1rem;border-radius:10px;opacity:0;pointer-events:none;transition:opacity .2s ease, transform .2s ease;max-width:90vw;text-align:center;z-index:50;}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 .toast.error{background:var(--incorrect);}
 </style>
@@ -285,12 +162,14 @@ textarea{resize:vertical;min-height:64px;font-family:inherit;}
 <body>
 <div class="page">
   <header class="masthead">
-    <p class="eyebrow">Formato GIFT · Banco de preguntas de Moodle</p>
-    <h1>Generador GIFT</h1>
-    <p class="lede">Escribe tus preguntas, elige el tipo y descarga el archivo listo para importar en Moodle. El código se genera y se comprueba a medida que escribes. Este archivo funciona sin conexión: guárdalo y ábrelo con tu navegador cuando lo necesites.</p>
+    <p class="eyebrow">GIFT y Moodle XML · Banco de preguntas</p>
+    <h1>Generador de preguntas Moodle</h1>
+    <p class="lede">Escribe las preguntas una sola vez y descárgalas en el formato que necesites. El código se genera y se comprueba a medida que escribes. Funciona sin conexión.</p>
   </header>
 
   <section class="panel" aria-label="Ajustes del examen">
+    <p class="hint" style="margin-bottom:.5rem;">Formato de salida</p>
+    <div class="format-row" id="format-row"></div>
     <div class="field">
       <label for="category-input">Categoría en Moodle (opcional)</label>
       <input type="text" id="category-input" placeholder="p. ej. Tema 2 · Retos demográficos" oninput="setCategory(this.value)">
@@ -301,49 +180,63 @@ textarea{resize:vertical;min-height:64px;font-family:inherit;}
   <section id="questions-container" aria-label="Preguntas"></section>
 
   <div class="add-bar">
-    <select id="new-type-select" aria-label="Tipo de la nueva pregunta">
-      <option value="multiple_single">Opción múltiple (una correcta)</option>
-      <option value="multiple_multi">Opción múltiple (varias correctas)</option>
-      <option value="truefalse">Verdadero / falso</option>
-      <option value="shortanswer">Respuesta corta</option>
-      <option value="matching">Emparejamiento</option>
-      <option value="numerical">Numérica</option>
-      <option value="essay">Ensayo (respuesta abierta)</option>
-    </select>
+    <select id="new-type-select" aria-label="Tipo de la nueva pregunta"></select>
     <button type="button" class="btn-ghost" id="add-question-btn">Añadir pregunta</button>
     <button type="button" class="btn-ghost" id="reset-btn">Empezar de cero</button>
   </div>
 
-  <section class="output-panel" aria-label="Código GIFT generado">
+  <section class="output-panel" aria-label="Código generado">
     <div class="output-head">
-      <h2>Vista previa GIFT</h2>
+      <h2 id="output-title">Vista previa</h2>
       <span class="output-status" id="output-status"></span>
     </div>
-    <pre class="gift-preview" id="gift-preview" aria-live="polite"></pre>
-    <textarea id="gift-raw" class="sr-only" tabindex="-1" aria-hidden="true" readonly></textarea>
+    <p class="notice" id="output-notice" hidden></p>
+    <pre class="code-preview" id="code-preview" aria-live="polite"></pre>
+    <textarea id="code-raw" class="sr-only" tabindex="-1" aria-hidden="true" readonly></textarea>
     <div class="output-actions">
       <button type="button" class="btn-ghost" id="copy-btn">Copiar código</button>
-      <select id="ext-select" aria-label="Extensión del archivo" style="width:auto;">
-        <option value="gift" selected>.gift</option>
-        <option value="txt">.txt</option>
-      </select>
+      <select id="ext-select" aria-label="Extensión del archivo" style="width:auto;"></select>
       <button type="button" class="btn-primary" id="download-btn">Descargar archivo</button>
     </div>
-    <p class="hint">Archivo en UTF-8 sin BOM. En Moodle: Banco de preguntas → Importar → elige <strong>"formato GIFT"</strong> en el desplegable y sube el archivo. Si tu Moodle rechaza la extensión <code>.gift</code> al subirlo, cambia el desplegable a <code>.txt</code>: el contenido es idéntico.</p>
+    <p class="hint" id="import-hint"></p>
   </section>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 </div>
 
 <script>
-const TYPE_LABELS = {
-  multiple_single: 'Opción múltiple (una correcta)',
-  multiple_multi: 'Opción múltiple (varias correctas)',
-  truefalse: 'Verdadero / falso',
-  shortanswer: 'Respuesta corta',
-  matching: 'Emparejamiento',
-  numerical: 'Numérica',
-  essay: 'Ensayo (respuesta abierta)'
+const FORMATS = {
+  gift: {
+    label: 'GIFT',
+    note: 'Texto legible y editable a mano. 7 tipos de pregunta.',
+    exts: ['gift','txt'],
+    hint: 'Archivo en UTF-8 sin BOM. En Moodle: Banco de preguntas → Importar → elige <strong>"formato GIFT"</strong> y sube el archivo. Si tu Moodle rechaza la extensión <code>.gift</code>, cambia el desplegable a <code>.txt</code>: el contenido es idéntico.'
+  },
+  xml: {
+    label: 'Moodle XML',
+    note: 'El formato completo: admite los 10 tipos, incluidos cloze y arrastrar y soltar.',
+    exts: ['xml'],
+    hint: 'Archivo en UTF-8. En Moodle: Banco de preguntas → Importar → elige <strong>"Formato XML de Moodle"</strong> y sube el archivo.'
+  }
+};
+
+const TYPES = {
+  multiple_single: {label:'Opción múltiple (una correcta)', formats:['gift','xml']},
+  multiple_multi:  {label:'Opción múltiple (varias correctas)', formats:['gift','xml']},
+  truefalse:       {label:'Verdadero / falso', formats:['gift','xml']},
+  shortanswer:     {label:'Respuesta corta', formats:['gift','xml']},
+  matching:        {label:'Emparejamiento', formats:['gift','xml']},
+  numerical:       {label:'Numérica', formats:['gift','xml']},
+  essay:           {label:'Ensayo (respuesta abierta)', formats:['gift','xml']},
+  cloze:           {label:'Respuestas incrustadas (cloze)', formats:['xml']},
+  gapselect:       {label:'Seleccionar palabras que faltan', formats:['xml']},
+  ddwtos:          {label:'Arrastrar y soltar sobre texto', formats:['xml']}
+};
+
+const GAP_KINDS = {
+  MULTICHOICE: 'Opción múltiple',
+  SHORTANSWER: 'Respuesta corta',
+  NUMERICAL:   'Numérica'
 };
 
 const ICON_PLUS = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>';
@@ -353,13 +246,13 @@ function escHtml(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').r
 function escAttr(s){ return escHtml(s).replace(/"/g,'&quot;'); }
 
 const VALID_WEIGHTS = [100,90,83.33333,80,75,70,66.66667,60,50,40,33.33333,30,25,20,16.66667,14.28571,12.5,11.11111,10,5];
-
 function snapWeight(w){
   let best = VALID_WEIGHTS[0];
   VALID_WEIGHTS.forEach(v=>{ if(Math.abs(v-w) < Math.abs(best-w)) best = v; });
   return best;
 }
 
+/* ---------- escapado GIFT (réplica de repchar() de Moodle) ---------- */
 function giftEsc(s){
   return (s||'')
     .replace(/\r/g,'')
@@ -372,82 +265,108 @@ function giftEsc(s){
     .replace(/:/g,'\\:')
     .replace(/\n/g,'\\n');
 }
+function categoryEsc(s){ return (s||'').replace(/[\r\n]+/g,' ').replace(/\\/g,'').trim(); }
 
-function categoryEsc(s){
-  return (s||'').replace(/[\r\n]+/g,' ').replace(/\\/g,'').trim();
+/* ---------- escapado cloze: terminan la alternativa ~ # } ---------- */
+function clozeEsc(s){
+  return (s||'')
+    .replace(/\r/g,'')
+    .replace(/\n+/g,' ')
+    .replace(/\\/g,'\\\\')
+    .replace(/~/g,'\\~')
+    .replace(/#/g,'\\#')
+    .replace(/\{/g,'\\{')
+    .replace(/\}/g,'\\}');
 }
 
+/* ---------- escapado XML (réplica de xml_escape() de Moodle) ---------- */
+function xmlEsc(s){
+  s = (s||'').replace(/\r/g,'');
+  if(s === '') return '';
+  if(/[&<>"]/.test(s)) return '<![CDATA[' + s.split(']]>').join(']]]]><![CDATA[>') + ']]>';
+  return s;
+}
+function xmlText(raw, indent){
+  return ' '.repeat(indent) + '<text>' + xmlEsc(raw) + '</text>\n';
+}
+
+/* ---------- modelo ---------- */
 function makeQuestion(id, type){
   const base = {id, type, name:'', text:'', feedback:'', isExample:false};
-  if(type==='multiple_single'){
-    return Object.assign(base, {answers:[{text:'',correct:true},{text:'',correct:false},{text:'',correct:false}]});
-  }
-  if(type==='multiple_multi'){
-    return Object.assign(base, {answers:[{text:'',correct:true},{text:'',correct:true},{text:'',correct:false}]});
-  }
-  if(type==='truefalse'){
-    return Object.assign(base, {tf:true});
-  }
-  if(type==='shortanswer'){
-    return Object.assign(base, {saLines:''});
-  }
-  if(type==='matching'){
-    return Object.assign(base, {pairs:[{left:'',right:''},{left:'',right:''},{left:'',right:''}]});
-  }
-  if(type==='numerical'){
-    return Object.assign(base, {numMode:'tolerance', numAnswer:'', numTolerance:'0', numMin:'', numMax:''});
-  }
-  if(type==='essay'){
-    return base;
-  }
+  if(type==='multiple_single') return Object.assign(base, {answers:[{text:'',correct:true},{text:'',correct:false},{text:'',correct:false}]});
+  if(type==='multiple_multi')  return Object.assign(base, {answers:[{text:'',correct:true},{text:'',correct:true},{text:'',correct:false}]});
+  if(type==='truefalse')       return Object.assign(base, {tf:true});
+  if(type==='shortanswer')     return Object.assign(base, {saLines:''});
+  if(type==='matching')        return Object.assign(base, {pairs:[{left:'',right:''},{left:'',right:''},{left:'',right:''}]});
+  if(type==='numerical')       return Object.assign(base, {numMode:'tolerance', numAnswer:'', numTolerance:'0', numMin:'', numMax:''});
+  if(type==='essay')           return base;
+  if(type==='cloze')           return Object.assign(base, {gaps:[makeGap()]});
+  if(type==='gapselect' || type==='ddwtos') return Object.assign(base, {options:[{text:'',group:'1'},{text:'',group:'1'},{text:'',group:'1'}]});
   base.type = 'multiple_single';
   return Object.assign(base, {answers:[{text:'',correct:true},{text:'',correct:false},{text:'',correct:false}]});
 }
 
+function makeGap(){
+  return {kind:'MULTICHOICE', answers:[{text:'',correct:true},{text:'',correct:false}], num:'', tol:'0'};
+}
+
 function defaultState(empty){
-  if(empty){ return {category:'', seq:0, questions:[]}; }
+  if(empty) return {format:'gift', category:'', seq:0, questions:[]};
   const q1 = makeQuestion(1,'multiple_single');
   q1.text = '¿Cuál es la capital de Francia?';
-  q1.answers = [
-    {text:'París', correct:true},
-    {text:'Londres', correct:false},
-    {text:'Berlín', correct:false},
-    {text:'Roma', correct:false}
-  ];
+  q1.answers = [{text:'París',correct:true},{text:'Londres',correct:false},{text:'Berlín',correct:false},{text:'Roma',correct:false}];
   q1.isExample = true;
-
   const q2 = makeQuestion(2,'truefalse');
   q2.text = 'El formato GIFT sirve para importar preguntas en el banco de preguntas de Moodle.';
   q2.tf = true;
   q2.isExample = true;
-
-  return {category:'', seq:2, questions:[q1,q2]};
+  return {format:'gift', category:'', seq:2, questions:[q1,q2]};
 }
 
 function normalizeQuestion(raw, fallbackId){
   const q = (raw && typeof raw === 'object') ? raw : {};
-  const type = TYPE_LABELS[q.type] ? q.type : 'multiple_single';
+  const type = TYPES[q.type] ? q.type : 'multiple_single';
   const base = makeQuestion(fallbackId, type);
   base.name = typeof q.name === 'string' ? q.name : '';
   base.text = typeof q.text === 'string' ? q.text : '';
   base.feedback = typeof q.feedback === 'string' ? q.feedback : '';
   base.isExample = q.isExample === true;
   if(base.answers && Array.isArray(q.answers)){
-    const answers = q.answers
-      .filter(a => a && typeof a === 'object')
-      .map(a => ({text: typeof a.text === 'string' ? a.text : '', correct: a.correct === true}));
+    const answers = q.answers.filter(a=>a && typeof a==='object')
+      .map(a=>({text: typeof a.text==='string'?a.text:'', correct: a.correct===true}));
     while(answers.length < 2) answers.push({text:'', correct:false});
     base.answers = answers;
   }
   if(base.pairs && Array.isArray(q.pairs)){
-    const pairs = q.pairs
-      .filter(p => p && typeof p === 'object')
-      .map(p => ({left: typeof p.left === 'string' ? p.left : '', right: typeof p.right === 'string' ? p.right : ''}));
-    while(pairs.length < 1) pairs.push({left:'', right:''});
+    const pairs = q.pairs.filter(p=>p && typeof p==='object')
+      .map(p=>({left: typeof p.left==='string'?p.left:'', right: typeof p.right==='string'?p.right:''}));
+    while(pairs.length < 3) pairs.push({left:'', right:''});
     base.pairs = pairs;
   }
+  if(base.options && Array.isArray(q.options)){
+    const opts = q.options.filter(o=>o && typeof o==='object')
+      .map(o=>({text: typeof o.text==='string'?o.text:'', group: String(o.group||'1')}));
+    while(opts.length < 1) opts.push({text:'', group:'1'});
+    base.options = opts;
+  }
+  if(base.gaps && Array.isArray(q.gaps)){
+    const gaps = q.gaps.filter(g=>g && typeof g==='object').map(g=>{
+      const gap = makeGap();
+      gap.kind = GAP_KINDS[g.kind] ? g.kind : 'MULTICHOICE';
+      if(Array.isArray(g.answers)){
+        const ans = g.answers.filter(a=>a && typeof a==='object')
+          .map(a=>({text: typeof a.text==='string'?a.text:'', correct: a.correct===true}));
+        while(ans.length < 1) ans.push({text:'', correct:true});
+        gap.answers = ans;
+      }
+      gap.num = g.num != null ? String(g.num) : '';
+      gap.tol = g.tol != null ? String(g.tol) : '0';
+      return gap;
+    });
+    base.gaps = gaps.length ? gaps : [makeGap()];
+  }
   if(typeof base.tf === 'boolean') base.tf = q.tf !== false;
-  if(typeof base.saLines === 'string') base.saLines = typeof q.saLines === 'string' ? q.saLines : '';
+  if(typeof base.saLines === 'string') base.saLines = typeof q.saLines==='string' ? q.saLines : '';
   if(base.numMode){
     base.numMode = q.numMode === 'range' ? 'range' : 'tolerance';
     base.numAnswer = q.numAnswer != null ? String(q.numAnswer) : '';
@@ -466,28 +385,30 @@ function loadDraft(){
     if(!parsed || !Array.isArray(parsed.questions)) return null;
     const questions = parsed.questions.map((q,i)=>normalizeQuestion(q, i+1));
     return {
+      format: FORMATS[parsed.format] ? parsed.format : 'gift',
       category: typeof parsed.category === 'string' ? parsed.category : '',
       seq: questions.length,
       questions: questions
     };
-  }catch(e){
-    return null;
-  }
+  }catch(e){ return null; }
 }
 function saveDraft(){
   try{ localStorage.setItem('gift-generator-draft', JSON.stringify(state)); }catch(e){}
 }
 
 let state = loadDraft() || defaultState(false);
-if(typeof state.seq !== 'number'){
-  state.seq = state.questions.reduce((m,q)=>Math.max(m,q.id||0),0);
-}
 
+function supported(q){ return !!(q && TYPES[q.type] && TYPES[q.type].formats.indexOf(state.format) !== -1); }
 function onTextChange(){ saveDraft(); updateOutput(); }
 function onStructuralChange(){ saveDraft(); renderAll(); updateOutput(); }
-
 function findQ(id){ return state.questions.find(q=>q.id===id); }
 
+/* ---------- acciones ---------- */
+function setFormat(f){
+  if(!FORMATS[f]) return;
+  state.format = f;
+  saveDraft(); renderTypeSelect(); renderExtSelect(); renderAll(); updateOutput();
+}
 function addQuestion(type){
   const id = ++state.seq;
   state.questions.push(makeQuestion(id, type));
@@ -497,80 +418,71 @@ function addQuestion(type){
     if(el) el.scrollIntoView({behavior:'smooth', block:'center'});
   });
 }
-function removeQuestion(id){
-  state.questions = state.questions.filter(q=>q.id!==id);
-  onStructuralChange();
-}
+function removeQuestion(id){ state.questions = state.questions.filter(q=>q.id!==id); onStructuralChange(); }
 function setType(id, type){
   const q = findQ(id);
   if(!q) return;
   const keep = {name:q.name, text:q.text, feedback:q.feedback};
   const fresh = makeQuestion(id, type);
   Object.assign(fresh, keep);
-  const idx = state.questions.indexOf(q);
-  state.questions[idx] = fresh;
+  state.questions[state.questions.indexOf(q)] = fresh;
   onStructuralChange();
 }
-function syncField(id, field, val){
-  const q = findQ(id);
-  if(q){ q[field] = val; q.isExample = false; onTextChange(); }
-}
-function syncAnswerText(id, idx, val){
-  const q = findQ(id);
-  if(q){ q.answers[idx].text = val; q.isExample = false; onTextChange(); }
-}
-function syncPair(id, idx, side, val){
-  const q = findQ(id);
-  if(q){ q.pairs[idx][side] = val; q.isExample = false; onTextChange(); }
-}
+function syncField(id, field, val){ const q=findQ(id); if(q){ q[field]=val; q.isExample=false; onTextChange(); } }
+function syncAnswerText(id, idx, val){ const q=findQ(id); if(q){ q.answers[idx].text=val; q.isExample=false; onTextChange(); } }
+function syncPair(id, idx, side, val){ const q=findQ(id); if(q){ q.pairs[idx][side]=val; q.isExample=false; onTextChange(); } }
+function syncOption(id, idx, field, val){ const q=findQ(id); if(q){ q.options[idx][field]=val; q.isExample=false; onTextChange(); } }
+function syncGapField(id, gi, field, val){ const q=findQ(id); if(q){ q.gaps[gi][field]=val; q.isExample=false; onTextChange(); } }
+function syncGapAnswer(id, gi, ai, val){ const q=findQ(id); if(q){ q.gaps[gi].answers[ai].text=val; q.isExample=false; onTextChange(); } }
 function setCategory(val){ state.category = val; onTextChange(); }
-function setCorrectSingle(id, idx){
-  const q = findQ(id);
-  if(q){ q.answers.forEach((a,i)=>a.correct=(i===idx)); q.isExample=false; onStructuralChange(); }
-}
-function toggleCorrectMulti(id, idx){
-  const q = findQ(id);
-  if(q){ q.answers[idx].correct = !q.answers[idx].correct; q.isExample=false; onStructuralChange(); }
-}
-function addAnswer(id){
-  const q = findQ(id);
-  if(q){ q.answers.push({text:'', correct:false}); onStructuralChange(); }
-}
-function removeAnswer(id, idx){
-  const q = findQ(id);
-  if(q && q.answers.length>2){ q.answers.splice(idx,1); onStructuralChange(); }
-}
-function addPair(id){
-  const q = findQ(id);
-  if(q){ q.pairs.push({left:'',right:''}); onStructuralChange(); }
-}
+function setCorrectSingle(id, idx){ const q=findQ(id); if(q){ q.answers.forEach((a,i)=>a.correct=(i===idx)); q.isExample=false; onStructuralChange(); } }
+function toggleCorrectMulti(id, idx){ const q=findQ(id); if(q){ q.answers[idx].correct=!q.answers[idx].correct; q.isExample=false; onStructuralChange(); } }
+function addAnswer(id){ const q=findQ(id); if(q){ q.answers.push({text:'',correct:false}); onStructuralChange(); } }
+function removeAnswer(id, idx){ const q=findQ(id); if(q && q.answers.length>2){ q.answers.splice(idx,1); onStructuralChange(); } }
+function addPair(id){ const q=findQ(id); if(q){ q.pairs.push({left:'',right:''}); onStructuralChange(); } }
 function removePair(id, idx){
-  const q = findQ(id);
+  const q=findQ(id);
   if(q && q.pairs.length>3){ q.pairs.splice(idx,1); onStructuralChange(); }
   else showToast('Moodle exige un mínimo de 3 pares en las preguntas de emparejamiento.', true);
 }
-function setTF(id, val){
-  const q = findQ(id);
-  if(q){ q.tf = (val==='true'); q.isExample=false; onStructuralChange(); }
-}
-function setNumMode(id, mode){
-  const q = findQ(id);
-  if(q){ q.numMode = mode; onStructuralChange(); }
-}
+function addOption(id){ const q=findQ(id); if(q){ q.options.push({text:'',group:'1'}); onStructuralChange(); } }
+function removeOption(id, idx){ const q=findQ(id); if(q && q.options.length>1){ q.options.splice(idx,1); onStructuralChange(); } }
+function addGap(id){ const q=findQ(id); if(q){ q.gaps.push(makeGap()); onStructuralChange(); } }
+function removeGap(id, gi){ const q=findQ(id); if(q && q.gaps.length>1){ q.gaps.splice(gi,1); onStructuralChange(); } }
+function setGapKind(id, gi, kind){ const q=findQ(id); if(q){ q.gaps[gi].kind=kind; onStructuralChange(); } }
+function setGapCorrect(id, gi, ai){ const q=findQ(id); if(q){ q.gaps[gi].answers.forEach((a,i)=>a.correct=(i===ai)); onStructuralChange(); } }
+function addGapAnswer(id, gi){ const q=findQ(id); if(q){ q.gaps[gi].answers.push({text:'',correct:false}); onStructuralChange(); } }
+function removeGapAnswer(id, gi, ai){ const q=findQ(id); if(q && q.gaps[gi].answers.length>1){ q.gaps[gi].answers.splice(ai,1); onStructuralChange(); } }
+function setTF(id, val){ const q=findQ(id); if(q){ q.tf=(val==='true'); q.isExample=false; onStructuralChange(); } }
+function setNumMode(id, mode){ const q=findQ(id); if(q){ q.numMode=mode; onStructuralChange(); } }
 function resetAll(){
   if(!confirm('¿Borrar todas las preguntas y empezar de cero?')) return;
+  hardReset();
+}
+function hardReset(){
+  const f = state.format;
   state = defaultState(true);
+  state.format = FORMATS[f] ? f : 'gift';
   saveDraft(); renderAll(); updateOutput();
 }
 
+/* ---------- formulario ---------- */
+function renderMarkerHint(q, etiqueta){
+  return `<p class="hint">Escribe el texto con huecos numerados: <code>[[1]]</code>, <code>[[2]]</code>… Cada hueco se corresponde con ${etiqueta} de la lista, por orden.</p>`;
+}
+
 function renderCard(q, num){
-  const typeOptions = Object.keys(TYPE_LABELS).map(v=>`<option value="${v}"${q.type===v?' selected':''}>${TYPE_LABELS[v]}</option>`).join('');
+  const typeOptions = Object.keys(TYPES).map(v=>{
+    const ok = TYPES[v].formats.indexOf(state.format) !== -1;
+    return `<option value="${v}"${q.type===v?' selected':''}>${TYPES[v].label}${ok?'':' — solo XML'}</option>`;
+  }).join('');
+  const ok = supported(q);
   let body = '';
 
   if(q.type==='multiple_single' || q.type==='multiple_multi'){
     const multi = q.type==='multiple_multi';
     const correctCount = q.answers.filter(a=>a.correct).length;
-    const weight = correctCount ? Number((100/correctCount).toFixed(5)) : 0;
+    const weight = correctCount ? snapWeight(Number((100/correctCount).toFixed(5))) : 0;
     body = `<p class="hint">${multi ? 'Marca todas las respuestas correctas: el peso se reparte a partes iguales entre ellas.' : 'Marca la respuesta correcta.'}</p>` +
       q.answers.map((a,i)=>`
         <div class="answer-row">
@@ -580,14 +492,17 @@ function renderCard(q, num){
           <button type="button" class="icon-btn" onclick="removeAnswer(${q.id},${i})" aria-label="Eliminar respuesta ${i+1}">${ICON_TRASH}</button>
         </div>`).join('') +
       `<button type="button" class="btn-dashed" onclick="addAnswer(${q.id})">${ICON_PLUS} Añadir opción</button>`;
+
   } else if(q.type==='truefalse'){
     body = `<div class="choice-row">
       <label><input type="radio" name="tf_${q.id}" value="true" ${q.tf?'checked':''} onchange="setTF(${q.id},'true')"> Verdadero</label>
       <label><input type="radio" name="tf_${q.id}" value="false" ${!q.tf?'checked':''} onchange="setTF(${q.id},'false')"> Falso</label>
     </div>`;
+
   } else if(q.type==='shortanswer'){
     body = `<p class="hint">Una respuesta aceptada por línea. Puedes añadir varias formas válidas.</p>
       <textarea placeholder="España&#10;Reino de España" oninput="syncField(${q.id},'saLines',this.value)">${escHtml(q.saLines||'')}</textarea>`;
+
   } else if(q.type==='matching'){
     body = `<p class="hint">Moodle exige un mínimo de 3 pares término → definición.</p>` +
       q.pairs.map((p,i)=>`
@@ -598,6 +513,7 @@ function renderCard(q, num){
           <button type="button" class="icon-btn" onclick="removePair(${q.id},${i})" aria-label="Eliminar par ${i+1}">${ICON_TRASH}</button>
         </div>`).join('') +
       `<button type="button" class="btn-dashed" onclick="addPair(${q.id})">${ICON_PLUS} Añadir par</button>`;
+
   } else if(q.type==='numerical'){
     body = `<div class="choice-row">
         <label><input type="radio" name="nummode_${q.id}" value="tolerance" ${q.numMode==='tolerance'?'checked':''} onchange="setNumMode(${q.id},'tolerance')"> Valor ± margen</label>
@@ -612,15 +528,72 @@ function renderCard(q, num){
           <div class="field"><label>Margen de error (±)</label><input type="number" step="any" value="${escAttr(q.numTolerance)}" oninput="syncField(${q.id},'numTolerance',this.value)"></div>
         `}
       </div>`;
+
   } else if(q.type==='essay'){
     body = `<p class="essay-note">El alumno escribirá una respuesta libre que corregirás a mano en Moodle. Si quieres, usa la retroalimentación general de abajo para dejarte una respuesta modelo.</p>`;
+
+  } else if(q.type==='gapselect' || q.type==='ddwtos'){
+    const etiqueta = q.type==='gapselect' ? 'una opción' : 'una etiqueta';
+    body = renderMarkerHint(q, etiqueta) +
+      `<p class="hint">Las opciones de más, sin hueco asignado, funcionan como distractores. El grupo limita qué opciones puede recibir cada hueco.</p>` +
+      q.options.map((o,i)=>`
+        <div class="opt-row">
+          <span class="gap-tag">[[${i+1}]]</span>
+          <input type="text" value="${escAttr(o.text)}" placeholder="${q.type==='gapselect'?'Opción':'Etiqueta'} ${i+1}" oninput="syncOption(${q.id},${i},'text',this.value)">
+          <select onchange="syncOption(${q.id},${i},'group',this.value)" aria-label="Grupo de la opción ${i+1}">
+            ${['1','2','3'].map(g=>`<option value="${g}"${o.group===g?' selected':''}>Grupo ${g}</option>`).join('')}
+          </select>
+          <button type="button" class="icon-btn" onclick="removeOption(${q.id},${i})" aria-label="Eliminar opción ${i+1}">${ICON_TRASH}</button>
+        </div>`).join('') +
+      `<button type="button" class="btn-dashed" onclick="addOption(${q.id})">${ICON_PLUS} Añadir ${q.type==='gapselect'?'opción':'etiqueta'}</button>`;
+
+  } else if(q.type==='cloze'){
+    body = renderMarkerHint(q, 'un hueco') +
+      q.gaps.map((g,gi)=>{
+        let inner = '';
+        if(g.kind==='NUMERICAL'){
+          inner = `<div class="num-grid">
+            <div class="field"><label>Respuesta correcta</label><input type="number" step="any" value="${escAttr(g.num)}" oninput="syncGapField(${q.id},${gi},'num',this.value)"></div>
+            <div class="field"><label>Margen de error (±)</label><input type="number" step="any" value="${escAttr(g.tol)}" oninput="syncGapField(${q.id},${gi},'tol',this.value)"></div>
+          </div>`;
+        } else if(g.kind==='SHORTANSWER'){
+          inner = `<p class="hint">Todas las respuestas escritas aquí se aceptan como correctas.</p>` +
+            g.answers.map((a,ai)=>`
+              <div class="opt-row">
+                <input type="text" value="${escAttr(a.text)}" placeholder="Respuesta aceptada ${ai+1}" oninput="syncGapAnswer(${q.id},${gi},${ai},this.value)">
+                <button type="button" class="icon-btn" onclick="removeGapAnswer(${q.id},${gi},${ai})" aria-label="Eliminar respuesta">${ICON_TRASH}</button>
+              </div>`).join('') +
+            `<button type="button" class="btn-dashed" onclick="addGapAnswer(${q.id},${gi})">${ICON_PLUS} Añadir respuesta aceptada</button>`;
+        } else {
+          inner = `<p class="hint">Marca la opción correcta del desplegable.</p>` +
+            g.answers.map((a,ai)=>`
+              <div class="opt-row">
+                <input type="radio" class="mark" name="gap_${q.id}_${gi}" ${a.correct?'checked':''} onchange="setGapCorrect(${q.id},${gi},${ai})" aria-label="Marcar como correcta">
+                <input type="text" value="${escAttr(a.text)}" placeholder="Opción ${ai+1}" oninput="syncGapAnswer(${q.id},${gi},${ai},this.value)">
+                <button type="button" class="icon-btn" onclick="removeGapAnswer(${q.id},${gi},${ai})" aria-label="Eliminar opción">${ICON_TRASH}</button>
+              </div>`).join('') +
+            `<button type="button" class="btn-dashed" onclick="addGapAnswer(${q.id},${gi})">${ICON_PLUS} Añadir opción</button>`;
+        }
+        return `<div class="gap-card">
+          <div class="gap-head">
+            <span class="gap-tag">[[${gi+1}]]</span>
+            <select onchange="setGapKind(${q.id},${gi},this.value)" aria-label="Tipo del hueco ${gi+1}">
+              ${Object.keys(GAP_KINDS).map(k=>`<option value="${k}"${g.kind===k?' selected':''}>${GAP_KINDS[k]}</option>`).join('')}
+            </select>
+            <button type="button" class="icon-btn" onclick="removeGap(${q.id},${gi})" aria-label="Eliminar hueco ${gi+1}" style="margin-left:auto">${ICON_TRASH}</button>
+          </div>
+          ${inner}
+        </div>`;
+      }).join('') +
+      `<button type="button" class="btn-dashed" onclick="addGap(${q.id})">${ICON_PLUS} Añadir hueco</button>`;
   }
 
-  return `<article class="q-card" id="card-${q.id}">
+  return `<article class="q-card${ok?'':' unsupported'}" id="card-${q.id}">
     <div class="q-head">
       <div class="q-head-left">
         <span class="q-num">Pregunta ${num}</span>
         ${q.isExample ? '<span class="q-example-badge">Ejemplo</span>' : ''}
+        ${ok ? '' : `<span class="q-warn">No exportable en ${FORMATS[state.format].label}</span>`}
       </div>
       <div class="q-head-right">
         <select class="type-select" onchange="setType(${q.id}, this.value)" aria-label="Tipo de pregunta ${num}">${typeOptions}</select>
@@ -646,24 +619,39 @@ function renderAll(){
       ? state.questions.map((q,i)=>renderCard(q,i+1)).join('')
       : '<p class="hint" style="padding:.5rem 0 1rem;">Todavía no hay preguntas. Añade la primera con el botón de abajo.</p>';
   }catch(e){
-    c.innerHTML = '<div class="q-card"><p class="hint" style="margin:0 0 .75rem;">No se han podido mostrar las preguntas guardadas en este navegador. Vacía los datos para volver a empezar; no se pierde nada más.</p><button type="button" class="btn-ghost" onclick="hardReset()">Vaciar y empezar de cero</button></div>';
+    c.innerHTML = '<div class="q-card"><p class="hint" style="margin:0 0 .75rem;">No se han podido mostrar las preguntas guardadas en este navegador. Vacía los datos para volver a empezar.</p><button type="button" class="btn-ghost" onclick="hardReset()">Vaciar y empezar de cero</button></div>';
   }
 }
 
-function hardReset(){
-  state = defaultState(true);
-  saveDraft();
-  renderAll();
-  updateOutput();
+function renderFormatRow(){
+  document.getElementById('format-row').innerHTML = Object.keys(FORMATS).map(f=>`
+    <label class="format-opt">
+      <input type="radio" name="fmt" value="${f}" ${state.format===f?'checked':''} onchange="setFormat('${f}')">
+      <span><strong>${FORMATS[f].label}</strong><small>${FORMATS[f].note}</small></span>
+    </label>`).join('');
 }
-
+function renderTypeSelect(){
+  const sel = document.getElementById('new-type-select');
+  const prev = sel.value;
+  sel.innerHTML = Object.keys(TYPES).map(t=>{
+    const ok = TYPES[t].formats.indexOf(state.format) !== -1;
+    return `<option value="${t}"${ok?'':' disabled'}>${TYPES[t].label}${ok?'':' — solo XML'}</option>`;
+  }).join('');
+  if(prev && TYPES[prev] && TYPES[prev].formats.indexOf(state.format) !== -1) sel.value = prev;
+}
+function renderExtSelect(){
+  const sel = document.getElementById('ext-select');
+  sel.innerHTML = FORMATS[state.format].exts.map(e=>`<option value="${e}">.${e}</option>`).join('');
+  sel.hidden = FORMATS[state.format].exts.length < 2;
+}
 function renderStats(){
   const counts = {};
   state.questions.forEach(q=>{ if(q && q.type){ counts[q.type] = (counts[q.type]||0)+1; } });
-  const chips = Object.keys(counts).filter(t=>TYPE_LABELS[t]).map(t=>`<span class="stat-chip">${TYPE_LABELS[t]}: ${counts[t]}</span>`).join('');
+  const chips = Object.keys(counts).filter(t=>TYPES[t]).map(t=>`<span class="stat-chip">${TYPES[t].label}: ${counts[t]}</span>`).join('');
   document.getElementById('stats-bar').innerHTML = chips || '<span class="stat-chip">Sin preguntas todavía</span>';
 }
 
+/* ---------- exportador GIFT ---------- */
 function buildQuestionGift(q){
   if(!q || typeof q !== 'object') return null;
   const name = (q.name && q.name.trim()) ? giftEsc(q.name.trim()) : '';
@@ -684,8 +672,7 @@ function buildQuestionGift(q){
       const weight = snapWeight(Number((100/correctCount).toFixed(5)));
       inner = answers.map(a=> a.correct
         ? `\n    ~%${weight}%${giftEsc(a.text.trim())}`
-        : `\n    ~${giftEsc(a.text.trim())}`
-      ).join('');
+        : `\n    ~${giftEsc(a.text.trim())}`).join('');
     }
   } else if(q.type==='truefalse'){
     inner = q.tf ? 'TRUE' : 'FALSE';
@@ -713,7 +700,6 @@ function buildQuestionGift(q){
   } else {
     ok = false;
   }
-
   if(!ok) return null;
 
   const multiline = inner.indexOf('\n') !== -1;
@@ -721,20 +707,184 @@ function buildQuestionGift(q){
   return `${namePart}${text}{${inner}${multiline?'\n':''}${feedback}}`;
 }
 
-function generateFullGift(){
+function generateGift(){
   let out = '';
-  if(state.category && state.category.trim()){
-    out += `$CATEGORY: ${categoryEsc(state.category)}\n\n`;
-  }
-  let validCount = 0, invalidCount = 0;
+  if(state.category && state.category.trim()) out += `$CATEGORY: ${categoryEsc(state.category)}\n\n`;
+  let valid = 0, incomplete = 0, unsupported = 0;
   state.questions.forEach(q=>{
+    if(!supported(q)){ unsupported++; return; }
     const built = buildQuestionGift(q);
-    if(built){ out += built + '\n\n'; validCount++; }
-    else invalidCount++;
+    if(built){ out += built + '\n\n'; valid++; } else incomplete++;
   });
-  return {text: out, validCount, invalidCount, total: state.questions.length};
+  return {text: out, valid, incomplete, unsupported, total: state.questions.length};
 }
 
+/* ---------- exportador Moodle XML ---------- */
+function qName(q, num){
+  const raw = (q.text||'').replace(/\s+/g,' ').trim();
+  if(!raw) return 'Pregunta ' + num;
+  return raw.length > 80 ? raw.slice(0,80).trim() + '…' : raw;
+}
+
+function xmlAnswer(text, fraction, extra){
+  return `    <answer fraction="${fraction}" format="html">\n` +
+         xmlText(text, 6) +
+         `      <feedback format="html">\n` + xmlText('', 8) + `      </feedback>\n` +
+         (extra || '') +
+         `    </answer>\n`;
+}
+
+function clozeGapSyntax(g){
+  if(g.kind==='NUMERICAL'){
+    const n = parseFloat(g.num);
+    if(isNaN(n)) return null;
+    const t = parseFloat(g.tol);
+    return `{1:NUMERICAL:=${n}:${isNaN(t)?0:t}}`;
+  }
+  const answers = (g.answers||[]).filter(a=>a.text.trim());
+  if(!answers.length) return null;
+  if(g.kind==='SHORTANSWER'){
+    return `{1:SHORTANSWER:` + answers.map(a=>`=${clozeEsc(a.text.trim())}`).join('~') + `}`;
+  }
+  if(!answers.some(a=>a.correct)) return null;
+  return `{1:MULTICHOICE:` + answers.map(a=>`${a.correct?'=':''}${clozeEsc(a.text.trim())}`).join('~') + `}`;
+}
+
+function buildQuestionXml(q, num){
+  if(!q || typeof q !== 'object') return null;
+  const type = q.type;
+  let body = '';
+  let questionText = (q.text||'').trim();
+  if(!questionText) return null;
+
+  if(type==='multiple_single' || type==='multiple_multi'){
+    const answers = (q.answers||[]).filter(a=>a.text.trim());
+    const correct = answers.filter(a=>a.correct);
+    if(answers.length<2 || !correct.length) return null;
+    const single = type==='multiple_single';
+    const weight = snapWeight(Number((100/correct.length).toFixed(5)));
+    body += `    <single>${single?'true':'false'}</single>\n`;
+    body += `    <shuffleanswers>true</shuffleanswers>\n`;
+    body += `    <answernumbering>abc</answernumbering>\n`;
+    answers.forEach(a=>{
+      body += xmlAnswer(a.text.trim(), a.correct ? (single ? 100 : weight) : 0);
+    });
+
+  } else if(type==='truefalse'){
+    body += xmlAnswer('true', q.tf ? 100 : 0);
+    body += xmlAnswer('false', q.tf ? 0 : 100);
+
+  } else if(type==='shortanswer'){
+    const lines = (q.saLines||'').split('\n').map(l=>l.trim()).filter(Boolean);
+    if(!lines.length) return null;
+    body += `    <usecase>0</usecase>\n`;
+    lines.forEach(l=>{ body += xmlAnswer(l, 100); });
+
+  } else if(type==='numerical'){
+    let value, tol;
+    if(q.numMode==='range'){
+      const min = parseFloat(q.numMin), max = parseFloat(q.numMax);
+      if(isNaN(min) || isNaN(max)) return null;
+      value = (min + max) / 2;
+      tol = Math.abs(max - min) / 2;
+    } else {
+      value = parseFloat(q.numAnswer);
+      if(isNaN(value)) return null;
+      tol = parseFloat(q.numTolerance);
+      if(isNaN(tol)) tol = 0;
+    }
+    body += xmlAnswer(String(value), 100, `      <tolerance>${tol}</tolerance>\n`);
+
+  } else if(type==='matching'){
+    const pairs = (q.pairs||[]).filter(p=>p.left.trim() && p.right.trim());
+    if(pairs.length<3) return null;
+    body += `    <shuffleanswers>true</shuffleanswers>\n`;
+    pairs.forEach(p=>{
+      body += `    <subquestion format="html">\n`;
+      body += xmlText(p.left.trim(), 6);
+      body += `      <answer>\n` + xmlText(p.right.trim(), 8) + `      </answer>\n`;
+      body += `    </subquestion>\n`;
+    });
+
+  } else if(type==='essay'){
+    body += `    <responseformat>editor</responseformat>\n`;
+    body += `    <responserequired>1</responserequired>\n`;
+    body += `    <responsefieldlines>10</responsefieldlines>\n`;
+    body += `    <attachments>0</attachments>\n`;
+    body += `    <attachmentsrequired>0</attachmentsrequired>\n`;
+    body += `    <graderinfo format="html">\n` + xmlText('', 6) + `    </graderinfo>\n`;
+    body += `    <responsetemplate format="html">\n` + xmlText('', 6) + `    </responsetemplate>\n`;
+
+  } else if(type==='gapselect' || type==='ddwtos'){
+    const opts = (q.options||[]).filter(o=>o.text.trim());
+    if(!opts.length) return null;
+    if(!/\[\[\d+\]\]/.test(questionText)) return null;
+    const tag = type==='gapselect' ? 'selectoption' : 'dragbox';
+    body += `    <shuffleanswers>1</shuffleanswers>\n`;
+    opts.forEach(o=>{
+      body += `    <${tag}>\n`;
+      body += xmlText(o.text.trim(), 6);
+      body += `      <group>${o.group||'1'}</group>\n`;
+      body += `    </${tag}>\n`;
+    });
+
+  } else if(type==='cloze'){
+    const gaps = q.gaps || [];
+    if(!gaps.length) return null;
+    let failed = false;
+    gaps.forEach((g,i)=>{
+      const syn = clozeGapSyntax(g);
+      if(syn === null){ failed = true; return; }
+      const marker = new RegExp('\\[\\[' + (i+1) + '\\]\\]', 'g');
+      if(!marker.test(questionText)) { failed = true; return; }
+      questionText = questionText.replace(new RegExp('\\[\\[' + (i+1) + '\\]\\]', 'g'), syn);
+    });
+    if(failed) return null;
+
+  } else {
+    return null;
+  }
+
+  const xmlType = {
+    multiple_single:'multichoice', multiple_multi:'multichoice', truefalse:'truefalse',
+    shortanswer:'shortanswer', numerical:'numerical', matching:'matching', essay:'essay',
+    cloze:'cloze', gapselect:'gapselect', ddwtos:'ddwtos'
+  }[type];
+
+  let out = `  <question type="${xmlType}">\n`;
+  out += `    <name>\n` + xmlText(qName(q, num), 6) + `    </name>\n`;
+  out += `    <questiontext format="html">\n` + xmlText(questionText, 6) + `    </questiontext>\n`;
+  out += `    <generalfeedback format="html">\n` + xmlText((q.feedback||'').trim(), 6) + `    </generalfeedback>\n`;
+  if(xmlType !== 'cloze') out += `    <defaultgrade>1</defaultgrade>\n`;
+  out += `    <penalty>0.3333333</penalty>\n`;
+  out += `    <hidden>0</hidden>\n`;
+  out += body;
+  out += `  </question>\n`;
+  return out;
+}
+
+function generateXml(){
+  let inner = '';
+  let valid = 0, incomplete = 0, unsupported = 0;
+  if(state.category && state.category.trim()){
+    inner += `  <question type="category">\n`;
+    inner += `    <category>\n` + xmlText('$course$/' + categoryEsc(state.category), 6) + `    </category>\n`;
+    inner += `  </question>\n`;
+  }
+  state.questions.forEach((q,i)=>{
+    if(!supported(q)){ unsupported++; return; }
+    const built = buildQuestionXml(q, i+1);
+    if(built){ inner += built; valid++; } else incomplete++;
+  });
+  const text = valid ? `<?xml version="1.0" encoding="UTF-8"?>\n<quiz>\n${inner}</quiz>\n` : '';
+  return {text, valid, incomplete, unsupported, total: state.questions.length};
+}
+
+function generateOutput(){
+  return state.format === 'xml' ? generateXml() : generateGift();
+}
+
+/* ---------- resaltado ---------- */
 function highlightGift(raw){
   let h = escHtml(raw);
   h = h.replace(/^(\$CATEGORY:.*)$/gm, '<span class="tok-category">$1</span>');
@@ -747,21 +897,40 @@ function highlightGift(raw){
   h = h.replace(/([{}])/g, '<span class="tok-brace">$1</span>');
   return h;
 }
+function highlightXml(raw){
+  let h = escHtml(raw);
+  h = h.replace(/(&lt;!\[CDATA\[)([\s\S]*?)(\]\]&gt;)/g, '<span class="tok-cdata">$1</span>$2<span class="tok-cdata">$3</span>');
+  h = h.replace(/(&lt;\/?)([a-zA-Z?!][\w:-]*)/g, '$1<span class="tok-tag">$2</span>');
+  h = h.replace(/(\s)([a-zA-Z-]+)(=&quot;|=")/g, '$1<span class="tok-attr">$2</span>$3');
+  return h;
+}
 
 function updateOutput(){
-  const {text, validCount, invalidCount, total} = generateFullGift();
-  const preview = document.getElementById('gift-preview');
-  preview.innerHTML = text.trim()
-    ? highlightGift(text)
-    : '<span style="color:var(--ink-muted)">Tu código GIFT aparecerá aquí a medida que completes preguntas.</span>';
-  document.getElementById('gift-raw').value = text;
+  const r = generateOutput();
+  const fmt = FORMATS[state.format];
+  document.getElementById('output-title').textContent = 'Vista previa ' + fmt.label;
+  const preview = document.getElementById('code-preview');
+  preview.innerHTML = r.text.trim()
+    ? (state.format === 'xml' ? highlightXml(r.text) : highlightGift(r.text))
+    : '<span style="color:var(--ink-muted)">Tu código aparecerá aquí a medida que completes preguntas.</span>';
+  document.getElementById('code-raw').value = r.text;
+
   const statusEl = document.getElementById('output-status');
-  if(total===0){ statusEl.textContent = 'Sin preguntas'; }
-  else if(invalidCount===0){ statusEl.textContent = `${validCount} de ${total} preguntas listas`; }
-  else { statusEl.textContent = `${validCount} de ${total} listas · ${invalidCount} incompleta${invalidCount>1?'s':''}`; }
+  if(r.total === 0) statusEl.textContent = 'Sin preguntas';
+  else statusEl.textContent = `${r.valid} de ${r.total} preguntas listas`;
+
+  const notice = document.getElementById('output-notice');
+  const avisos = [];
+  if(r.incomplete) avisos.push(`${r.incomplete} pregunta${r.incomplete>1?'s':''} sin completar (faltan respuestas o huecos por definir).`);
+  if(r.unsupported) avisos.push(`${r.unsupported} pregunta${r.unsupported>1?'s':''} de un tipo que ${fmt.label} no admite: cambia a Moodle XML para incluirla${r.unsupported>1?'s':''}.`);
+  if(avisos.length){ notice.innerHTML = avisos.join(' '); notice.hidden = false; }
+  else notice.hidden = true;
+
+  document.getElementById('import-hint').innerHTML = fmt.hint;
   renderStats();
 }
 
+/* ---------- salida ---------- */
 let toastTimer = null;
 function showToast(msg, isError){
   const el = document.getElementById('toast');
@@ -771,43 +940,39 @@ function showToast(msg, isError){
   clearTimeout(toastTimer);
   toastTimer = setTimeout(()=>{ el.classList.remove('show'); }, 3800);
 }
-
 function slug(s){
-  const cleaned = s.normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-zA-Z0-9]+/g,'_').replace(/^_+|_+$/g,'').toLowerCase();
+  const cleaned = (s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-zA-Z0-9]+/g,'_').replace(/^_+|_+$/g,'').toLowerCase();
   return cleaned || 'examen';
 }
-
-async function copyGift(){
-  const {text, validCount} = generateFullGift();
-  if(!validCount){ showToast('Añade al menos una pregunta completa antes de copiar.', true); return; }
+async function copyCode(){
+  const r = generateOutput();
+  if(!r.valid){ showToast('Añade al menos una pregunta completa antes de copiar.', true); return; }
   try{
-    await navigator.clipboard.writeText(text);
-    showToast('Código GIFT copiado al portapapeles.');
+    await navigator.clipboard.writeText(r.text);
+    showToast('Código copiado al portapapeles.');
   }catch(e){
     try{
-      const ta = document.getElementById('gift-raw');
+      const ta = document.getElementById('code-raw');
       ta.focus(); ta.select();
-      const ok = document.execCommand('copy');
-      if(!ok) throw new Error('copy failed');
-      showToast('Código GIFT copiado al portapapeles.');
+      if(!document.execCommand('copy')) throw new Error('copy failed');
+      showToast('Código copiado al portapapeles.');
     }catch(e2){
       showToast('No se pudo copiar automáticamente. Selecciona el texto de la vista previa a mano.', true);
     }
   }
 }
-
-function downloadGift(){
-  const {text, validCount} = generateFullGift();
-  if(!validCount){ showToast('Añade al menos una pregunta completa antes de descargar.', true); return; }
+function downloadCode(){
+  const r = generateOutput();
+  if(!r.valid){ showToast('Añade al menos una pregunta completa antes de descargar.', true); return; }
   const extEl = document.getElementById('ext-select');
-  const ext = (extEl && extEl.value === 'txt') ? '.txt' : '.gift';
-  const filename = slug(state.category && state.category.trim() ? state.category : 'examen') + ext;
+  const exts = FORMATS[state.format].exts;
+  const ext = (extEl && exts.indexOf(extEl.value) !== -1) ? extEl.value : exts[0];
+  const filename = slug(state.category && state.category.trim() ? state.category : 'examen') + '.' + ext;
   try{
-    const blob = new Blob([text], {type:'text/plain;charset=utf-8'});
+    const blob = new Blob([r.text], {type:'text/plain;charset=utf-8'});
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
+    a.href = url; a.download = filename;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -818,14 +983,19 @@ function downloadGift(){
   }
 }
 
+/* ---------- arranque ---------- */
 document.getElementById('category-input').value = state.category || '';
 document.getElementById('add-question-btn').addEventListener('click', ()=>{
-  addQuestion(document.getElementById('new-type-select').value);
+  const sel = document.getElementById('new-type-select');
+  if(sel.value) addQuestion(sel.value);
 });
 document.getElementById('reset-btn').addEventListener('click', resetAll);
-document.getElementById('copy-btn').addEventListener('click', copyGift);
-document.getElementById('download-btn').addEventListener('click', downloadGift);
+document.getElementById('copy-btn').addEventListener('click', copyCode);
+document.getElementById('download-btn').addEventListener('click', downloadCode);
 
+renderFormatRow();
+renderTypeSelect();
+renderExtSelect();
 renderAll();
 updateOutput();
 </script>
