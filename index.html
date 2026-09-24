@@ -428,7 +428,22 @@ function setType(id, type){
   state.questions[state.questions.indexOf(q)] = fresh;
   onStructuralChange();
 }
-function syncField(id, field, val){ const q=findQ(id); if(q){ q[field]=val; q.isExample=false; onTextChange(); } }
+function syncField(id, field, val){
+  const q = findQ(id);
+  if(!q) return;
+  q[field] = val;
+  q.isExample = false;
+  if(field === 'text') refreshNamePlaceholder(q);
+  onTextChange();
+}
+function refreshNamePlaceholder(q){
+  try{
+    const card = document.getElementById('card-' + q.id);
+    if(!card || typeof card.querySelector !== 'function') return;
+    const input = card.querySelector('.name-input');
+    if(input) input.placeholder = autoName(q, state.questions.indexOf(q) + 1);
+  }catch(e){}
+}
 function syncAnswerText(id, idx, val){ const q=findQ(id); if(q){ q.answers[idx].text=val; q.isExample=false; onTextChange(); } }
 function syncPair(id, idx, side, val){ const q=findQ(id); if(q){ q.pairs[idx][side]=val; q.isExample=false; onTextChange(); } }
 function syncOption(id, idx, field, val){ const q=findQ(id); if(q){ q.options[idx][field]=val; q.isExample=false; onTextChange(); } }
@@ -601,6 +616,10 @@ function renderCard(q, num){
       </div>
     </div>
     <div class="field">
+      <label>Nombre en el banco de preguntas (opcional)</label>
+      <input type="text" class="name-input" value="${escAttr(q.name||'')}" placeholder="${escAttr(autoName(q, num))}" oninput="syncField(${q.id},'name',this.value)">
+    </div>
+    <div class="field">
       <label>Enunciado</label>
       <textarea placeholder="Escribe aquí la pregunta..." oninput="syncField(${q.id},'text',this.value)">${escHtml(q.text)}</textarea>
     </div>
@@ -720,10 +739,17 @@ function generateGift(){
 }
 
 /* ---------- exportador Moodle XML ---------- */
-function qName(q, num){
-  const raw = (q.text||'').replace(/\s+/g,' ').trim();
+function autoName(q, num){
+  const raw = (q.text||'')
+    .replace(/\[\[\d+\]\]/g, '___')
+    .replace(/\s+/g,' ')
+    .trim();
   if(!raw) return 'Pregunta ' + num;
-  return raw.length > 80 ? raw.slice(0,80).trim() + '…' : raw;
+  return raw.length > 70 ? raw.slice(0,70).trim() + '…' : raw;
+}
+function qName(q, num){
+  const manual = (q.name||'').trim();
+  return manual || autoName(q, num);
 }
 
 function xmlAnswer(text, fraction, extra){
