@@ -323,9 +323,13 @@ textarea{resize:vertical;min-height:64px;font-family:inherit;}
     <textarea id="gift-raw" class="sr-only" tabindex="-1" aria-hidden="true" readonly></textarea>
     <div class="output-actions">
       <button type="button" class="btn-ghost" id="copy-btn">Copiar código</button>
+      <select id="ext-select" aria-label="Extensión del archivo" style="width:auto;">
+        <option value="gift" selected>.gift</option>
+        <option value="txt">.txt</option>
+      </select>
       <button type="button" class="btn-primary" id="download-btn">Descargar archivo</button>
     </div>
-    <p class="hint">Se descarga con extensión <strong>.gift</strong> y codificación UTF-8. En Moodle: Banco de preguntas → Importar → elige "formato GIFT" en el desplegable de formato y sube el archivo.</p>
+    <p class="hint">Archivo en UTF-8 sin BOM. En Moodle: Banco de preguntas → Importar → elige <strong>"formato GIFT"</strong> en el desplegable y sube el archivo. Si tu Moodle rechaza la extensión <code>.gift</code> al subirlo, cambia el desplegable a <code>.txt</code>: el contenido es idéntico.</p>
   </section>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -348,14 +352,29 @@ const ICON_TRASH = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" 
 function escHtml(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function escAttr(s){ return escHtml(s).replace(/"/g,'&quot;'); }
 
+const VALID_WEIGHTS = [100,90,83.33333,80,75,70,66.66667,60,50,40,33.33333,30,25,20,16.66667,14.28571,12.5,11.11111,10,5];
+
+function snapWeight(w){
+  let best = VALID_WEIGHTS[0];
+  VALID_WEIGHTS.forEach(v=>{ if(Math.abs(v-w) < Math.abs(best-w)) best = v; });
+  return best;
+}
+
 function giftEsc(s){
   return (s||'')
+    .replace(/\r/g,'')
     .replace(/\\/g,'\\\\')
-    .replace(/~/g,'\\~')
-    .replace(/=/g,'\\=')
     .replace(/#/g,'\\#')
+    .replace(/=/g,'\\=')
+    .replace(/~/g,'\\~')
     .replace(/\{/g,'\\{')
-    .replace(/\}/g,'\\}');
+    .replace(/\}/g,'\\}')
+    .replace(/:/g,'\\:')
+    .replace(/\n/g,'\\n');
+}
+
+function categoryEsc(s){
+  return (s||'').replace(/[\r\n]+/g,' ').replace(/\\/g,'').trim();
 }
 
 function makeQuestion(id, type){
@@ -527,7 +546,8 @@ function addPair(id){
 }
 function removePair(id, idx){
   const q = findQ(id);
-  if(q && q.pairs.length>1){ q.pairs.splice(idx,1); onStructuralChange(); }
+  if(q && q.pairs.length>3){ q.pairs.splice(idx,1); onStructuralChange(); }
+  else showToast('Moodle exige un mínimo de 3 pares en las preguntas de emparejamiento.', true);
 }
 function setTF(id, val){
   const q = findQ(id);
@@ -569,7 +589,7 @@ function renderCard(q, num){
     body = `<p class="hint">Una respuesta aceptada por línea. Puedes añadir varias formas válidas.</p>
       <textarea placeholder="España&#10;Reino de España" oninput="syncField(${q.id},'saLines',this.value)">${escHtml(q.saLines||'')}</textarea>`;
   } else if(q.type==='matching'){
-    body = `<p class="hint">Añade al menos 3 pares término → definición.</p>` +
+    body = `<p class="hint">Moodle exige un mínimo de 3 pares término → definición.</p>` +
       q.pairs.map((p,i)=>`
         <div class="pair-row">
           <input type="text" value="${escAttr(p.left)}" placeholder="Término ${i+1}" oninput="syncPair(${q.id},${i},'left',this.value)">
@@ -661,7 +681,7 @@ function buildQuestionGift(q){
     const correctCount = answers.filter(a=>a.correct).length;
     if(answers.length<2 || correctCount===0) ok=false;
     else{
-      const weight = Number((100/correctCount).toFixed(5));
+      const weight = snapWeight(Number((100/correctCount).toFixed(5)));
       inner = answers.map(a=> a.correct
         ? `\n    ~%${weight}%${giftEsc(a.text.trim())}`
         : `\n    ~${giftEsc(a.text.trim())}`
@@ -675,7 +695,7 @@ function buildQuestionGift(q){
     else inner = lines.map(l=>`\n    =${giftEsc(l)}`).join('');
   } else if(q.type==='matching'){
     const pairs = (q.pairs||[]).filter(p=>p.left.trim() && p.right.trim());
-    if(pairs.length<2) ok=false;
+    if(pairs.length<3) ok=false;
     else inner = pairs.map(p=>`\n    =${giftEsc(p.left.trim())} -> ${giftEsc(p.right.trim())}`).join('');
   } else if(q.type==='numerical'){
     if(q.numMode==='range'){
@@ -704,7 +724,7 @@ function buildQuestionGift(q){
 function generateFullGift(){
   let out = '';
   if(state.category && state.category.trim()){
-    out += `$CATEGORY: ${giftEsc(state.category.trim())}\n\n`;
+    out += `$CATEGORY: ${categoryEsc(state.category)}\n\n`;
   }
   let validCount = 0, invalidCount = 0;
   state.questions.forEach(q=>{
@@ -779,7 +799,9 @@ async function copyGift(){
 function downloadGift(){
   const {text, validCount} = generateFullGift();
   if(!validCount){ showToast('Añade al menos una pregunta completa antes de descargar.', true); return; }
-  const filename = slug(state.category && state.category.trim() ? state.category : 'examen') + '.gift';
+  const extEl = document.getElementById('ext-select');
+  const ext = (extEl && extEl.value === 'txt') ? '.txt' : '.gift';
+  const filename = slug(state.category && state.category.trim() ? state.category : 'examen') + ext;
   try{
     const blob = new Blob([text], {type:'text/plain;charset=utf-8'});
     const url = URL.createObjectURL(blob);
