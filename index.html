@@ -325,7 +325,7 @@ textarea{resize:vertical;min-height:64px;font-family:inherit;}
       <button type="button" class="btn-ghost" id="copy-btn">Copiar código</button>
       <button type="button" class="btn-primary" id="download-btn">Descargar archivo</button>
     </div>
-    <p class="hint">Se descarga como .txt. En Moodle: Banco de preguntas → Importar → elige "formato GIFT" en el desplegable de formato (por lo general no depende de la extensión del archivo; si tu Moodle da problemas, renómbralo a .gift antes de subirlo).</p>
+    <p class="hint">Se descarga con extensión <strong>.gift</strong> y codificación UTF-8. En Moodle: Banco de preguntas → Importar → elige "formato GIFT" en el desplegable de formato y sube el archivo.</p>
   </section>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -405,15 +405,55 @@ function defaultState(empty){
   return {category:'', seq:2, questions:[q1,q2]};
 }
 
+function normalizeQuestion(raw, fallbackId){
+  const q = (raw && typeof raw === 'object') ? raw : {};
+  const type = TYPE_LABELS[q.type] ? q.type : 'multiple_single';
+  const base = makeQuestion(fallbackId, type);
+  base.name = typeof q.name === 'string' ? q.name : '';
+  base.text = typeof q.text === 'string' ? q.text : '';
+  base.feedback = typeof q.feedback === 'string' ? q.feedback : '';
+  base.isExample = q.isExample === true;
+  if(base.answers && Array.isArray(q.answers)){
+    const answers = q.answers
+      .filter(a => a && typeof a === 'object')
+      .map(a => ({text: typeof a.text === 'string' ? a.text : '', correct: a.correct === true}));
+    while(answers.length < 2) answers.push({text:'', correct:false});
+    base.answers = answers;
+  }
+  if(base.pairs && Array.isArray(q.pairs)){
+    const pairs = q.pairs
+      .filter(p => p && typeof p === 'object')
+      .map(p => ({left: typeof p.left === 'string' ? p.left : '', right: typeof p.right === 'string' ? p.right : ''}));
+    while(pairs.length < 1) pairs.push({left:'', right:''});
+    base.pairs = pairs;
+  }
+  if(typeof base.tf === 'boolean') base.tf = q.tf !== false;
+  if(typeof base.saLines === 'string') base.saLines = typeof q.saLines === 'string' ? q.saLines : '';
+  if(base.numMode){
+    base.numMode = q.numMode === 'range' ? 'range' : 'tolerance';
+    base.numAnswer = q.numAnswer != null ? String(q.numAnswer) : '';
+    base.numTolerance = q.numTolerance != null ? String(q.numTolerance) : '0';
+    base.numMin = q.numMin != null ? String(q.numMin) : '';
+    base.numMax = q.numMax != null ? String(q.numMax) : '';
+  }
+  return base;
+}
+
 function loadDraft(){
   try{
     const raw = localStorage.getItem('gift-generator-draft');
-    if(raw){
-      const parsed = JSON.parse(raw);
-      if(parsed && Array.isArray(parsed.questions)) return parsed;
-    }
-  }catch(e){}
-  return null;
+    if(!raw) return null;
+    const parsed = JSON.parse(raw);
+    if(!parsed || !Array.isArray(parsed.questions)) return null;
+    const questions = parsed.questions.map((q,i)=>normalizeQuestion(q, i+1));
+    return {
+      category: typeof parsed.category === 'string' ? parsed.category : '',
+      seq: questions.length,
+      questions: questions
+    };
+  }catch(e){
+    return null;
+  }
 }
 function saveDraft(){
   try{ localStorage.setItem('gift-generator-draft', JSON.stringify(state)); }catch(e){}
@@ -581,19 +621,31 @@ function renderCard(q, num){
 
 function renderAll(){
   const c = document.getElementById('questions-container');
-  c.innerHTML = state.questions.length
-    ? state.questions.map((q,i)=>renderCard(q,i+1)).join('')
-    : '<p class="hint" style="padding:.5rem 0 1rem;">Todavía no hay preguntas. Añade la primera con el botón de abajo.</p>';
+  try{
+    c.innerHTML = state.questions.length
+      ? state.questions.map((q,i)=>renderCard(q,i+1)).join('')
+      : '<p class="hint" style="padding:.5rem 0 1rem;">Todavía no hay preguntas. Añade la primera con el botón de abajo.</p>';
+  }catch(e){
+    c.innerHTML = '<div class="q-card"><p class="hint" style="margin:0 0 .75rem;">No se han podido mostrar las preguntas guardadas en este navegador. Vacía los datos para volver a empezar; no se pierde nada más.</p><button type="button" class="btn-ghost" onclick="hardReset()">Vaciar y empezar de cero</button></div>';
+  }
+}
+
+function hardReset(){
+  state = defaultState(true);
+  saveDraft();
+  renderAll();
+  updateOutput();
 }
 
 function renderStats(){
   const counts = {};
-  state.questions.forEach(q=>{ counts[q.type] = (counts[q.type]||0)+1; });
-  const chips = Object.keys(counts).map(t=>`<span class="stat-chip">${TYPE_LABELS[t]}: ${counts[t]}</span>`).join('');
+  state.questions.forEach(q=>{ if(q && q.type){ counts[q.type] = (counts[q.type]||0)+1; } });
+  const chips = Object.keys(counts).filter(t=>TYPE_LABELS[t]).map(t=>`<span class="stat-chip">${TYPE_LABELS[t]}: ${counts[t]}</span>`).join('');
   document.getElementById('stats-bar').innerHTML = chips || '<span class="stat-chip">Sin preguntas todavía</span>';
 }
 
 function buildQuestionGift(q){
+  if(!q || typeof q !== 'object') return null;
   const name = (q.name && q.name.trim()) ? giftEsc(q.name.trim()) : '';
   const namePart = name ? `::${name}::` : '';
   const text = giftEsc((q.text||'').trim()) || 'Pregunta sin enunciado';
@@ -724,36 +776,21 @@ async function copyGift(){
   }
 }
 
-async function downloadGift(){
+function downloadGift(){
   const {text, validCount} = generateFullGift();
   if(!validCount){ showToast('Añade al menos una pregunta completa antes de descargar.', true); return; }
-  const filename = slug(state.category && state.category.trim() ? state.category : 'examen') + '.txt';
-
-  if(window.claude && typeof window.claude.use === 'function'){
-    try{
-      const downloads = await window.claude.use('downloads');
-      if(downloads){
-        try{
-          const res = await downloads.save({filename, data: text});
-          showToast(res && res.status==='delivered' ? 'Archivo entregado.' : 'Archivo descargado. En Moodle, elige "formato GIFT" al importarlo.');
-          return;
-        }catch(err){
-          if(err && err.code === 'declined'){ return; }
-        }
-      }
-    }catch(e){}
-  }
-
+  const filename = slug(state.category && state.category.trim() ? state.category : 'examen') + '.gift';
   try{
     const blob = new Blob([text], {type:'text/plain;charset=utf-8'});
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    a.href = url; a.download = filename;
+    a.href = url;
+    a.download = filename;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     setTimeout(()=>URL.revokeObjectURL(url), 1000);
-    showToast('Archivo descargado. En Moodle, elige "formato GIFT" al importarlo.');
+    showToast('Archivo ' + filename + ' descargado.');
   }catch(e){
     showToast('No se pudo descargar. Prueba con "Copiar código".', true);
   }
