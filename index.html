@@ -23,6 +23,8 @@
   --correct-soft:#E5EEE6;
   --incorrect:#9C4A3E;
   --incorrect-soft:#F5E7E2;
+  --sv-bg:#E8F4F9;
+  --sv-border:#CFE3EC;
   --font-display:'Fraunces', Georgia, 'Times New Roman', serif;
   --font-body:'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-mono:'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
@@ -45,6 +47,8 @@
     --correct-soft:#213228;
     --incorrect:#E2988A;
     --incorrect-soft:#392621;
+    --sv-bg:#1D2A30;
+    --sv-border:#2E434C;
     color-scheme: dark;
   }
 }
@@ -64,9 +68,12 @@
   --correct-soft:#213228;
   --incorrect:#E2988A;
   --incorrect-soft:#392621;
+  --sv-bg:#1D2A30;
+  --sv-border:#2E434C;
   color-scheme: dark;
 }
 *{box-sizing:border-box;}
+[hidden]{display:none !important;}
 body{
   margin:0;
   background:var(--paper);
@@ -154,6 +161,37 @@ textarea{resize:vertical;min-height:64px;font-family:inherit;}
 .tok-cdata{color:var(--ink-muted);}
 .output-actions{display:flex;flex-wrap:wrap;gap:.6rem;margin-bottom:.7rem;align-items:center;}
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+.icon-btn.move:hover{color:var(--accent);}
+.weight-tag.neg{color:var(--incorrect);}
+.hint.warn{color:var(--incorrect);}
+.penalty-row{display:flex;flex-direction:column;gap:.35rem;margin:0 0 .75rem;padding:.65rem .75rem;background:var(--paper-sunken);border-radius:8px;}
+.penalty-row label{font-size:13px;color:var(--ink-soft);font-weight:500;}
+.penalty-row .hint{margin:0;}
+.fb-row{margin:-.15rem 0 .55rem 1.95rem;}
+.fb-row input{font-size:13px;padding:.38rem .6rem;}
+.fb-toggle{display:flex;align-items:center;gap:.45rem;font-size:13px;color:var(--ink-soft);margin-top:.7rem;cursor:pointer;}
+.fb-toggle input{width:auto;}
+.view-tabs{display:flex;gap:.25rem;margin-bottom:.8rem;border-bottom:1px solid var(--rule);}
+.view-tab{font:inherit;font-size:13px;font-weight:500;background:transparent;border:none;border-bottom:2px solid transparent;padding:.45rem .8rem;color:var(--ink-soft);cursor:pointer;margin-bottom:-1px;}
+.view-tab[aria-selected="true"]{color:var(--accent-ink);border-bottom-color:var(--accent);}
+.student-view{display:flex;flex-direction:column;gap:.85rem;margin-bottom:.9rem;max-height:560px;overflow:auto;}
+.sv-q{display:grid;grid-template-columns:96px minmax(0,1fr);gap:.6rem;}
+@media (max-width:520px){ .sv-q{grid-template-columns:minmax(0,1fr);} }
+.sv-info{font-size:12px;color:var(--ink-soft);background:var(--paper-sunken);border:1px solid var(--rule);border-radius:6px;padding:.45rem .55rem;align-self:start;}
+.sv-body{background:var(--sv-bg);border:1px solid var(--sv-border);border-radius:8px;padding:.8rem 1rem;font-size:14px;line-height:1.9;}
+.sv-text{margin:0 0 .5rem;}
+.sv-instr{margin:0 0 .3rem;font-size:13px;color:var(--ink-soft);line-height:1.5;}
+.sv-opt{display:flex;align-items:flex-start;gap:.45rem;padding:.1rem 0;cursor:pointer;line-height:1.5;}
+.sv-opt input{margin-top:.25rem;width:auto;flex-shrink:0;}
+.sv-body select, .sv-body input[type=text]{width:auto;display:inline-block;padding:.2rem .45rem;font-size:13.5px;vertical-align:middle;}
+.sv-gap{min-width:92px;margin:0 .15rem;}
+.sv-body input.sv-gap-in{width:120px;}
+.sv-match{border-collapse:collapse;}
+.sv-match td{padding:.2rem .7rem .2rem 0;vertical-align:middle;line-height:1.5;}
+.sv-body textarea.sv-essay{min-height:90px;}
+.sv-drop{display:inline-block;min-width:100px;height:1.55em;vertical-align:middle;border:1px dashed var(--rule-strong);border-radius:5px;background:var(--paper-raised);margin:0 .15rem;}
+.sv-chips{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.3rem;}
+.sv-chip{font-size:13px;line-height:1.5;background:var(--accent-soft);color:var(--accent-ink);border-radius:5px;padding:.15rem .6rem;}
 .toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--paper);font-size:13px;padding:.6rem 1.1rem;border-radius:10px;opacity:0;pointer-events:none;transition:opacity .2s ease, transform .2s ease;max-width:90vw;text-align:center;z-index:50;}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 .toast.error{background:var(--incorrect);}
@@ -190,8 +228,13 @@ textarea{resize:vertical;min-height:64px;font-family:inherit;}
       <h2 id="output-title">Vista previa</h2>
       <span class="output-status" id="output-status"></span>
     </div>
+    <div class="view-tabs" role="tablist" aria-label="Tipo de vista">
+      <button type="button" role="tab" class="view-tab" id="tab-code" aria-selected="true" onclick="setView('code')">Código</button>
+      <button type="button" role="tab" class="view-tab" id="tab-student" aria-selected="false" onclick="setView('student')">Vista del alumno</button>
+    </div>
     <p class="notice" id="output-notice" hidden></p>
     <pre class="code-preview" id="code-preview" aria-live="polite"></pre>
+    <div class="student-view" id="student-view" hidden></div>
     <textarea id="code-raw" class="sr-only" tabindex="-1" aria-hidden="true" readonly></textarea>
     <div class="output-actions">
       <button type="button" class="btn-ghost" id="copy-btn">Copiar código</button>
@@ -242,6 +285,9 @@ const GAP_KINDS = {
 const ICON_PLUS = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>';
 const ICON_TRASH = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>';
 
+const ICON_UP = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="18 15 12 9 6 15"/></svg>';
+const ICON_DOWN = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>';
+
 function escHtml(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function escAttr(s){ return escHtml(s).replace(/"/g,'&quot;'); }
 
@@ -250,6 +296,24 @@ function snapWeight(w){
   let best = VALID_WEIGHTS[0];
   VALID_WEIGHTS.forEach(v=>{ if(Math.abs(v-w) < Math.abs(best-w)) best = v; });
   return best;
+}
+
+/* Peso de cada opción en "varias correctas". Moodle suma lo que marca el alumno
+   (entre 0 y 100 %), así que sin peso negativo marcar todo da la nota máxima. */
+function multiWeights(q){
+  const filled = (q.answers||[]).filter(a=>a.text && a.text.trim());
+  const pool = filled.length ? filled : (q.answers||[]);
+  const nCorrect = pool.filter(a=>a.correct).length;
+  if(!nCorrect) return {pos:0, neg:0};
+  const pos = snapWeight(Number((100/nCorrect).toFixed(5)));
+  let neg = 0;
+  if(q.penaltyMode === 'full') neg = -100;
+  else if(q.penaltyMode !== 'none') neg = -pos;
+  return {pos:pos, neg:neg};
+}
+
+function answerFb(q, a){
+  return (q.answerFbOn && a.fb && a.fb.trim()) ? a.fb.trim() : '';
 }
 
 /* ---------- escapado GIFT (réplica de repchar() de Moodle) ---------- */
@@ -291,11 +355,13 @@ function xmlText(raw, indent){
 }
 
 /* ---------- modelo ---------- */
+function mkAns(correct){ return {text:'', correct:correct, fb:''}; }
+
 function makeQuestion(id, type){
   const base = {id, type, name:'', text:'', feedback:'', isExample:false};
-  if(type==='multiple_single') return Object.assign(base, {answers:[{text:'',correct:true},{text:'',correct:false},{text:'',correct:false}]});
-  if(type==='multiple_multi')  return Object.assign(base, {answers:[{text:'',correct:true},{text:'',correct:true},{text:'',correct:false}]});
-  if(type==='truefalse')       return Object.assign(base, {tf:true});
+  if(type==='multiple_single') return Object.assign(base, {answerFbOn:false, answers:[mkAns(true),mkAns(false),mkAns(false)]});
+  if(type==='multiple_multi')  return Object.assign(base, {answerFbOn:false, penaltyMode:'equal', answers:[mkAns(true),mkAns(true),mkAns(false)]});
+  if(type==='truefalse')       return Object.assign(base, {tf:true, answerFbOn:false, fbTrue:'', fbFalse:''});
   if(type==='shortanswer')     return Object.assign(base, {saLines:''});
   if(type==='matching')        return Object.assign(base, {pairs:[{left:'',right:''},{left:'',right:''},{left:'',right:''}]});
   if(type==='numerical')       return Object.assign(base, {numMode:'tolerance', numAnswer:'', numTolerance:'0', numMin:'', numMax:''});
@@ -303,7 +369,7 @@ function makeQuestion(id, type){
   if(type==='cloze')           return Object.assign(base, {gaps:[makeGap()]});
   if(type==='gapselect' || type==='ddwtos') return Object.assign(base, {options:[{text:'',group:'1'},{text:'',group:'1'},{text:'',group:'1'}]});
   base.type = 'multiple_single';
-  return Object.assign(base, {answers:[{text:'',correct:true},{text:'',correct:false},{text:'',correct:false}]});
+  return Object.assign(base, {answerFbOn:false, answers:[mkAns(true),mkAns(false),mkAns(false)]});
 }
 
 function makeGap(){
@@ -333,9 +399,15 @@ function normalizeQuestion(raw, fallbackId){
   base.isExample = q.isExample === true;
   if(base.answers && Array.isArray(q.answers)){
     const answers = q.answers.filter(a=>a && typeof a==='object')
-      .map(a=>({text: typeof a.text==='string'?a.text:'', correct: a.correct===true}));
-    while(answers.length < 2) answers.push({text:'', correct:false});
+      .map(a=>({text: typeof a.text==='string'?a.text:'', correct: a.correct===true, fb: typeof a.fb==='string'?a.fb:''}));
+    while(answers.length < 2) answers.push(mkAns(false));
     base.answers = answers;
+  }
+  if('answerFbOn' in base) base.answerFbOn = q.answerFbOn === true;
+  if('penaltyMode' in base) base.penaltyMode = ['equal','full','none'].indexOf(q.penaltyMode) !== -1 ? q.penaltyMode : 'equal';
+  if('fbTrue' in base){
+    base.fbTrue = typeof q.fbTrue==='string' ? q.fbTrue : '';
+    base.fbFalse = typeof q.fbFalse==='string' ? q.fbFalse : '';
   }
   if(base.pairs && Array.isArray(q.pairs)){
     const pairs = q.pairs.filter(p=>p && typeof p==='object')
@@ -452,7 +524,23 @@ function syncGapAnswer(id, gi, ai, val){ const q=findQ(id); if(q){ q.gaps[gi].an
 function setCategory(val){ state.category = val; onTextChange(); }
 function setCorrectSingle(id, idx){ const q=findQ(id); if(q){ q.answers.forEach((a,i)=>a.correct=(i===idx)); q.isExample=false; onStructuralChange(); } }
 function toggleCorrectMulti(id, idx){ const q=findQ(id); if(q){ q.answers[idx].correct=!q.answers[idx].correct; q.isExample=false; onStructuralChange(); } }
-function addAnswer(id){ const q=findQ(id); if(q){ q.answers.push({text:'',correct:false}); onStructuralChange(); } }
+function addAnswer(id){ const q=findQ(id); if(q){ q.answers.push(mkAns(false)); onStructuralChange(); } }
+function syncAnswerFb(id, idx, val){ const q=findQ(id); if(q && q.answers[idx]){ q.answers[idx].fb=val; onTextChange(); } }
+function toggleAnswerFb(id){ const q=findQ(id); if(q){ q.answerFbOn = !q.answerFbOn; onStructuralChange(); } }
+function setPenalty(id, mode){ const q=findQ(id); if(q){ q.penaltyMode = mode; onStructuralChange(); } }
+function moveQuestion(id, dir){
+  const i = state.questions.findIndex(q=>q.id===id);
+  const j = i + dir;
+  if(i < 0 || j < 0 || j >= state.questions.length) return;
+  const tmp = state.questions[i];
+  state.questions[i] = state.questions[j];
+  state.questions[j] = tmp;
+  onStructuralChange();
+  requestAnimationFrame(()=>{
+    const el = document.getElementById('card-'+id);
+    if(el) el.scrollIntoView({behavior:'smooth', block:'nearest'});
+  });
+}
 function removeAnswer(id, idx){ const q=findQ(id); if(q && q.answers.length>2){ q.answers.splice(idx,1); onStructuralChange(); } }
 function addPair(id){ const q=findQ(id); if(q){ q.pairs.push({left:'',right:''}); onStructuralChange(); } }
 function removePair(id, idx){
@@ -494,25 +582,47 @@ function renderCard(q, num){
   const ok = supported(q);
   let body = '';
 
+  const fbToggle = `<label class="fb-toggle"><input type="checkbox" ${q.answerFbOn?'checked':''} onchange="toggleAnswerFb(${q.id})"> Retroalimentación para cada respuesta</label>`;
+
   if(q.type==='multiple_single' || q.type==='multiple_multi'){
     const multi = q.type==='multiple_multi';
-    const correctCount = q.answers.filter(a=>a.correct).length;
-    const weight = correctCount ? snapWeight(Number((100/correctCount).toFixed(5))) : 0;
-    body = `<p class="hint">${multi ? 'Marca todas las respuestas correctas: el peso se reparte a partes iguales entre ellas.' : 'Marca la respuesta correcta.'}</p>` +
+    const w = multi ? multiWeights(q) : {pos:100, neg:0};
+    const penaltyText = {
+      equal: 'cada opción incorrecta marcada resta lo mismo que suma una correcta, así que marcarlas todas no puntúa.',
+      full: 'marcar cualquier opción incorrecta deja la pregunta a cero.',
+      none: 'las incorrectas no restan, y marcar todas las casillas da la nota máxima.'
+    }[q.penaltyMode || 'equal'];
+    body = `<p class="hint">${multi ? 'Marca todas las respuestas correctas.' : 'Marca la respuesta correcta.'}</p>` +
+      (multi ? `<div class="penalty-row">
+          <label for="pen_${q.id}">Penalización por opción incorrecta</label>
+          <select id="pen_${q.id}" onchange="setPenalty(${q.id},this.value)">
+            <option value="equal"${q.penaltyMode==='equal'?' selected':''}>Igual al valor de una correcta (recomendado)</option>
+            <option value="full"${q.penaltyMode==='full'?' selected':''}>Total: un error anula la pregunta</option>
+            <option value="none"${q.penaltyMode==='none'?' selected':''}>Sin penalización</option>
+          </select>
+          <p class="hint${q.penaltyMode==='none'?' warn':''}">Con esta opción, ${penaltyText}</p>
+        </div>` : '') +
       q.answers.map((a,i)=>`
         <div class="answer-row">
           <input type="${multi?'checkbox':'radio'}" class="mark" ${multi ? `onchange="toggleCorrectMulti(${q.id},${i})"` : `name="correct_${q.id}" onchange="setCorrectSingle(${q.id},${i})"`} ${a.correct?'checked':''} aria-label="Marcar respuesta ${i+1} como correcta">
           <input type="text" value="${escAttr(a.text)}" placeholder="Respuesta ${i+1}" oninput="syncAnswerText(${q.id},${i},this.value)">
-          ${multi && a.correct ? `<span class="weight-tag">${weight}%</span>` : ''}
+          ${multi ? (a.correct ? `<span class="weight-tag">${w.pos}%</span>` : (w.neg ? `<span class="weight-tag neg">${w.neg}%</span>` : '')) : ''}
           <button type="button" class="icon-btn" onclick="removeAnswer(${q.id},${i})" aria-label="Eliminar respuesta ${i+1}">${ICON_TRASH}</button>
-        </div>`).join('') +
-      `<button type="button" class="btn-dashed" onclick="addAnswer(${q.id})">${ICON_PLUS} Añadir opción</button>`;
+        </div>
+        ${q.answerFbOn ? `<div class="fb-row"><input type="text" value="${escAttr(a.fb||'')}" placeholder="Retroalimentación si elige la respuesta ${i+1} (opcional)" oninput="syncAnswerFb(${q.id},${i},this.value)" aria-label="Retroalimentación de la respuesta ${i+1}"></div>` : ''}`).join('') +
+      `<button type="button" class="btn-dashed" onclick="addAnswer(${q.id})">${ICON_PLUS} Añadir opción</button>` +
+      fbToggle;
 
   } else if(q.type==='truefalse'){
     body = `<div class="choice-row">
       <label><input type="radio" name="tf_${q.id}" value="true" ${q.tf?'checked':''} onchange="setTF(${q.id},'true')"> Verdadero</label>
       <label><input type="radio" name="tf_${q.id}" value="false" ${!q.tf?'checked':''} onchange="setTF(${q.id},'false')"> Falso</label>
-    </div>`;
+    </div>` +
+      (q.answerFbOn ? `<div class="num-grid">
+        <div class="field"><label>Si responde «Verdadero» (${q.tf?'acierta':'falla'})</label><input type="text" value="${escAttr(q.fbTrue||'')}" placeholder="Opcional" oninput="syncField(${q.id},'fbTrue',this.value)"></div>
+        <div class="field"><label>Si responde «Falso» (${q.tf?'falla':'acierta'})</label><input type="text" value="${escAttr(q.fbFalse||'')}" placeholder="Opcional" oninput="syncField(${q.id},'fbFalse',this.value)"></div>
+      </div>` : '') +
+      fbToggle;
 
   } else if(q.type==='shortanswer'){
     body = `<p class="hint">Una respuesta aceptada por línea. Puedes añadir varias formas válidas.</p>
@@ -611,6 +721,8 @@ function renderCard(q, num){
         ${ok ? '' : `<span class="q-warn">No exportable en ${FORMATS[state.format].label}</span>`}
       </div>
       <div class="q-head-right">
+        <button type="button" class="icon-btn move" onclick="moveQuestion(${q.id},-1)" aria-label="Subir pregunta ${num}"${num===1?' style="visibility:hidden"':''}>${ICON_UP}</button>
+        <button type="button" class="icon-btn move" onclick="moveQuestion(${q.id},1)" aria-label="Bajar pregunta ${num}"${num===state.questions.length?' style="visibility:hidden"':''}>${ICON_DOWN}</button>
         <select class="type-select" onchange="setType(${q.id}, this.value)" aria-label="Tipo de pregunta ${num}">${typeOptions}</select>
         <button type="button" class="icon-btn" onclick="removeQuestion(${q.id})" aria-label="Eliminar pregunta ${num}">${ICON_TRASH}</button>
       </div>
@@ -682,19 +794,33 @@ function buildQuestionGift(q){
   if(q.type==='multiple_single'){
     const answers = (q.answers||[]).filter(a=>a.text.trim());
     if(answers.length<2 || !answers.some(a=>a.correct)) ok=false;
-    else inner = answers.map(a=>`\n    ${a.correct?'=':'~'}${giftEsc(a.text.trim())}`).join('');
+    else inner = answers.map(a=>{
+      const fb = answerFb(q, a);
+      return `\n    ${a.correct?'=':'~'}${giftEsc(a.text.trim())}${fb ? '#'+giftEsc(fb) : ''}`;
+    }).join('');
   } else if(q.type==='multiple_multi'){
     const answers = (q.answers||[]).filter(a=>a.text.trim());
     const correctCount = answers.filter(a=>a.correct).length;
     if(answers.length<2 || correctCount===0) ok=false;
     else{
-      const weight = snapWeight(Number((100/correctCount).toFixed(5)));
-      inner = answers.map(a=> a.correct
-        ? `\n    ~%${weight}%${giftEsc(a.text.trim())}`
-        : `\n    ~${giftEsc(a.text.trim())}`).join('');
+      const w = multiWeights(q);
+      inner = answers.map(a=>{
+        const fb = answerFb(q, a);
+        const weight = a.correct ? `%${w.pos}%` : (w.neg ? `%${w.neg}%` : '');
+        return `\n    ~${weight}${giftEsc(a.text.trim())}${fb ? '#'+giftEsc(fb) : ''}`;
+      }).join('');
     }
   } else if(q.type==='truefalse'){
     inner = q.tf ? 'TRUE' : 'FALSE';
+    if(q.answerFbOn){
+      const fT = (q.fbTrue||'').trim();
+      const fF = (q.fbFalse||'').trim();
+      const right = q.tf ? fT : fF;
+      const wrong = q.tf ? fF : fT;
+      if(wrong) inner += '#' + giftEsc(wrong);
+      else if(right) inner += '#';
+      if(right) inner += '#' + giftEsc(right);
+    }
   } else if(q.type==='shortanswer'){
     const lines = (q.saLines||'').split('\n').map(l=>l.trim()).filter(Boolean);
     if(!lines.length) ok=false;
@@ -752,10 +878,10 @@ function qName(q, num){
   return manual || autoName(q, num);
 }
 
-function xmlAnswer(text, fraction, extra){
+function xmlAnswer(text, fraction, extra, feedback){
   return `    <answer fraction="${fraction}" format="html">\n` +
          xmlText(text, 6) +
-         `      <feedback format="html">\n` + xmlText('', 8) + `      </feedback>\n` +
+         `      <feedback format="html">\n` + xmlText(feedback || '', 8) + `      </feedback>\n` +
          (extra || '') +
          `    </answer>\n`;
 }
@@ -788,17 +914,19 @@ function buildQuestionXml(q, num){
     const correct = answers.filter(a=>a.correct);
     if(answers.length<2 || !correct.length) return null;
     const single = type==='multiple_single';
-    const weight = snapWeight(Number((100/correct.length).toFixed(5)));
+    const w = single ? {pos:100, neg:0} : multiWeights(q);
     body += `    <single>${single?'true':'false'}</single>\n`;
     body += `    <shuffleanswers>true</shuffleanswers>\n`;
     body += `    <answernumbering>abc</answernumbering>\n`;
     answers.forEach(a=>{
-      body += xmlAnswer(a.text.trim(), a.correct ? (single ? 100 : weight) : 0);
+      body += xmlAnswer(a.text.trim(), a.correct ? w.pos : w.neg, '', answerFb(q, a));
     });
 
   } else if(type==='truefalse'){
-    body += xmlAnswer('true', q.tf ? 100 : 0);
-    body += xmlAnswer('false', q.tf ? 0 : 100);
+    const fT = q.answerFbOn ? (q.fbTrue||'').trim() : '';
+    const fF = q.answerFbOn ? (q.fbFalse||'').trim() : '';
+    body += xmlAnswer('true', q.tf ? 100 : 0, '', fT);
+    body += xmlAnswer('false', q.tf ? 0 : 100, '', fF);
 
   } else if(type==='shortanswer'){
     const lines = (q.saLines||'').split('\n').map(l=>l.trim()).filter(Boolean);
@@ -931,8 +1059,92 @@ function highlightXml(raw){
   return h;
 }
 
+/* ---------- vista del alumno ---------- */
+let viewMode = 'code';
+
+function setView(v){
+  viewMode = (v === 'student') ? 'student' : 'code';
+  document.getElementById('tab-code').setAttribute('aria-selected', viewMode === 'code' ? 'true' : 'false');
+  document.getElementById('tab-student').setAttribute('aria-selected', viewMode === 'student' ? 'true' : 'false');
+  document.getElementById('code-preview').hidden = viewMode !== 'code';
+  document.getElementById('student-view').hidden = viewMode !== 'student';
+  updateOutput();
+}
+
+function svText(s){ return escHtml(s || '').replace(/\n/g, '<br>'); }
+function svFilled(arr){ return (arr || []).filter(a => a && a.text && a.text.trim()); }
+function svSort(list){ return list.slice().sort((a,b)=>a.localeCompare(b, 'es')); }
+
+function renderStudentQuestion(q){
+  const name = 'sv' + q.id;
+  switch(q.type){
+    case 'multiple_single':
+    case 'multiple_multi': {
+      const multi = q.type === 'multiple_multi';
+      return `<p class="sv-text">${svText(q.text)}</p>
+        <p class="sv-instr">${multi ? 'Seleccione una o más:' : 'Seleccione una:'}</p>` +
+        svFilled(q.answers).map((a,i)=>`<label class="sv-opt"><input type="${multi?'checkbox':'radio'}" name="${name}"><span>${String.fromCharCode(97+i)}. ${svText(a.text)}</span></label>`).join('');
+    }
+    case 'truefalse':
+      return `<p class="sv-text">${svText(q.text)}</p><p class="sv-instr">Seleccione una:</p>
+        <label class="sv-opt"><input type="radio" name="${name}"><span>Verdadero</span></label>
+        <label class="sv-opt"><input type="radio" name="${name}"><span>Falso</span></label>`;
+    case 'shortanswer':
+    case 'numerical':
+      return `<p class="sv-text">${svText(q.text)}</p><label>Respuesta: <input type="text"></label>`;
+    case 'matching': {
+      const pairs = (q.pairs || []).filter(p => p.left.trim() && p.right.trim());
+      const opts = '<option>Elegir…</option>' + svSort(pairs.map(p => p.right.trim())).map(r => `<option>${escHtml(r)}</option>`).join('');
+      return `<p class="sv-text">${svText(q.text)}</p><table class="sv-match">` +
+        pairs.map(p => `<tr><td>${svText(p.left)}</td><td><select>${opts}</select></td></tr>`).join('') + '</table>';
+    }
+    case 'essay':
+      return `<p class="sv-text">${svText(q.text)}</p><textarea class="sv-essay" rows="5"></textarea>`;
+    case 'cloze': {
+      let t = svText(q.text);
+      (q.gaps || []).forEach((g, gi) => {
+        const ctl = g.kind === 'MULTICHOICE'
+          ? '<select class="sv-gap"><option></option>' + svFilled(g.answers).map(a => `<option>${escHtml(a.text)}</option>`).join('') + '</select>'
+          : '<input type="text" class="sv-gap sv-gap-in">';
+        t = t.split('[[' + (gi+1) + ']]').join(ctl);
+      });
+      return `<p class="sv-text">${t}</p>`;
+    }
+    case 'gapselect': {
+      const opts = svFilled(q.options);
+      const t = svText(q.text).replace(/\[\[(\d+)\]\]/g, (m, d) => {
+        const ref = opts[parseInt(d, 10) - 1];
+        const group = ref ? (ref.group || '1') : '1';
+        const choices = svSort(opts.filter(o => (o.group || '1') === group).map(o => o.text.trim()));
+        return '<select class="sv-gap"><option></option>' + choices.map(c => `<option>${escHtml(c)}</option>`).join('') + '</select>';
+      });
+      return `<p class="sv-text">${t}</p>`;
+    }
+    case 'ddwtos': {
+      const t = svText(q.text).replace(/\[\[\d+\]\]/g, '<span class="sv-drop"></span>');
+      return `<p class="sv-text">${t}</p><div class="sv-chips">` +
+        svFilled(q.options).map(o => `<span class="sv-chip">${escHtml(o.text)}</span>`).join('') + '</div>';
+    }
+  }
+  return '';
+}
+
+function renderStudentView(){
+  const list = state.questions.filter(q => supported(q));
+  if(!list.length) return '<p class="hint">Aquí verás las preguntas aproximadamente como las encontrará el alumno.</p>';
+  return '<p class="hint" style="margin:0;">Aproximación a cómo lo mostrará Moodle. Moodle baraja el orden de las opciones; aquí aparecen tal como las escribiste.</p>' +
+    list.map(q => {
+      let inner = '';
+      try{ inner = renderStudentQuestion(q); }catch(e){ inner = '<p class="hint">No se puede previsualizar esta pregunta.</p>'; }
+      return `<div class="sv-q"><div class="sv-info">Pregunta ${state.questions.indexOf(q)+1}</div><div class="sv-body">${inner}</div></div>`;
+    }).join('');
+}
+
 function updateOutput(){
   const r = generateOutput();
+  if(viewMode === 'student'){
+    document.getElementById('student-view').innerHTML = renderStudentView();
+  }
   const fmt = FORMATS[state.format];
   document.getElementById('output-title').textContent = 'Vista previa ' + fmt.label;
   const preview = document.getElementById('code-preview');
