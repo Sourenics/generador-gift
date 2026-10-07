@@ -1,0 +1,97 @@
+name: Informe de error
+description: Algo no funciona como debería en el Generador GIFT
+title: "[Error] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ¡Gracias por avisar! Rellena los campos obligatorios: sin ellos normalmente no podemos reproducir el problema.
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: ¿Qué ha pasado?
+      description: Describe el problema y qué esperabas que ocurriera.
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Pasos para reproducirlo
+      description: ¿Qué hiciste y en qué orden?
+      placeholder: |
+        1. Añado una pregunta de tipo ...
+        2. Relleno ...
+        3. Pulso "Descargar" ...
+    validations:
+      required: true
+
+  - type: dropdown
+    id: question-type
+    attributes:
+      label: Tipo de pregunta afectado
+      multiple: true
+      options:
+        - Opción múltiple
+        - Verdadero/Falso
+        - Respuesta corta
+        - Emparejamiento
+        - Numérica
+        - Ensayo
+        - Respuestas incrustadas (cloze)
+        - Seleccionar palabras que faltan
+        - Arrastrar y soltar sobre texto
+        - Ninguno en concreto / interfaz general
+    validations:
+      required: true
+
+  - type: dropdown
+    id: format
+    attributes:
+      label: Formato de exportación
+      options:
+        - GIFT
+        - Moodle XML
+        - No aplica
+    validations:
+      required: true
+
+  - type: dropdown
+    id: where
+    attributes:
+      label: ¿Dónde aparece el fallo?
+      options:
+        - En la aplicación (antes de exportar)
+        - Al importar el archivo en Moodle
+        - En el cuestionario ya importado en Moodle
+    validations:
+      required: true
+
+  - type: textarea
+    id: moodle-error
+    attributes:
+      label: Mensaje de error de Moodle (si lo hay)
+      description: Copia el texto exacto que muestra Moodle al importar.
+      render: text
+
+  - type: input
+    id: moodle-version
+    attributes:
+      label: Versión de Moodle
+      description: Si el fallo ocurre en Moodle (por ejemplo, 4.5). Si no la sabes, déjalo vacío.
+
+  - type: input
+    id: browser
+    attributes:
+      label: Navegador y sistema
+      placeholder: "Ej.: Chrome 129 en Windows 11"
+    validations:
+      required: true
+
+  - type: textarea
+    id: file
+    attributes:
+      label: Archivo generado o capturas
+      description: Arrastra aquí el archivo exportado (.txt o .xml) o capturas de pantalla. Ayuda muchísimo a encontrar el fallo.
