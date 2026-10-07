@@ -1,0 +1,47 @@
+name: Sugerencia
+description: Propón una mejora o una nueva función para Classroom Planner
+title: "[Sugerencia] "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ¡Gracias por proponer una mejora! Antes de enviarla, revisa si alguien ya ha sugerido algo parecido en las incidencias abiertas.
+
+        ⚠️ **No incluyas nombres ni datos reales de tus alumnos** en el texto ni en las capturas: las incidencias son públicas.
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: ¿A qué parte afecta?
+      options:
+        - Diseño del plano (pupitres, distribución)
+        - Gestión de alumnos
+        - Exportar / importar .json
+        - Impresión o exportación del plano
+        - Interfaz y facilidad de uso
+        - Otra
+    validations:
+      required: true
+
+  - type: textarea
+    id: idea
+    attributes:
+      label: ¿Qué te gustaría?
+      description: Describe la idea con el mayor detalle posible.
+    validations:
+      required: true
+
+  - type: textarea
+    id: why
+    attributes:
+      label: ¿Para qué te sería útil?
+      description: Cuéntanos en qué situación del aula lo usarías.
+    validations:
+      required: true
+
+  - type: textarea
+    id: example
+    attributes:
+      label: Ejemplo o boceto (opcional)
+      description: Puedes arrastrar aquí una imagen o un dibujo de cómo lo imaginas (sin datos reales de alumnos).
